@@ -1,3 +1,8 @@
+//! Integration tests against the public GitHub API.
+//!
+//! They run anonymously by default (subject to GitHub's low anonymous rate
+//! limit). Set GITHUB_TOKEN to authenticate and enable the token-only tests.
+
 use octowatch_core::{start_device_login, Client, Repo};
 
 fn client() -> std::sync::Arc<Client> {
