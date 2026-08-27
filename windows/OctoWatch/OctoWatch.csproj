@@ -11,6 +11,10 @@
     <UseWinUI>true</UseWinUI>
     <!-- App desempacotado (unpackaged): roda como .exe comum -->
     <WindowsPackageType>None</WindowsPackageType>
+    <!-- Empacota o Windows App Runtime (e o .NET) junto do .exe: roda sem instalar
+         o runtime na máquina. Custa um output maior. -->
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <SelfContained>true</SelfContained>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <!-- Os bindings gerados pelo UniFFI usam blocos unsafe -->
