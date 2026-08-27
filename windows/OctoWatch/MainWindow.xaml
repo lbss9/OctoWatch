@@ -44,6 +44,8 @@
       CompactPaneLength="48"
       Background="Transparent"
       SelectionChanged="OnNavSelectionChanged"
+      PaneOpening="OnPaneOpening"
+      PaneClosed="OnPaneClosed"
     >
       <!-- Deixa o pane e a área de conteúdo transparentes para o efeito vidro
            aparecer de fato (senão o fundo próprio do NavigationView cobre o acrylic). -->
@@ -52,22 +54,15 @@
         <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
         <SolidColorBrush x:Key="NavigationViewContentGridBorderBrush" Color="Transparent" />
         <Thickness x:Key="NavigationViewContentGridBorderThickness">0</Thickness>
-        <!-- Menu com vidro fosco próprio (in-app acrylic): translúcido e dinâmico,
-             mas embaça o que está atrás -> continua legível mesmo com o app transparente,
-             em vez de virar uma faixa preta chapada. -->
+        <!-- Fundo do pane: um in-app acrylic que começa TRANSPARENTE (faixa fechada =
+             glass, homogêneo com o app). Ao abrir o menu, o code-behind sobe a opacidade
+             -> vira vidro fosco escuro que embaça o conteúdo atrás (legível, sem vazar). -->
         <AcrylicBrush
           x:Key="NavigationViewDefaultPaneBackground"
           TintColor="{ThemeResource SolidBackgroundFillColorBase}"
-          TintOpacity="0.5"
-          TintLuminosityOpacity="0.55"
-          FallbackColor="{ThemeResource SolidBackgroundFillColorSecondary}"
-        />
-        <AcrylicBrush
-          x:Key="NavigationViewExpandedPaneBackground"
-          TintColor="{ThemeResource SolidBackgroundFillColorBase}"
-          TintOpacity="0.5"
-          TintLuminosityOpacity="0.55"
-          FallbackColor="{ThemeResource SolidBackgroundFillColorSecondary}"
+          TintOpacity="0"
+          TintLuminosityOpacity="0"
+          FallbackColor="Transparent"
         />
       </NavigationView.Resources>
       <NavigationView.MenuItems>
