@@ -2,7 +2,7 @@
 /core/target/
 **/*.rs.bk
 
-# Bindings gerados (regeráveis via scripts/gen-bindings)
+# Generated bindings (regenerate via scripts/gen-bindings)
 /macos/Sources/OctoWatch/Generated/
 /windows/OctoWatch/Interop/
 /windows/OctoWatch/octowatch_core.dll
@@ -21,6 +21,6 @@
 /linux/target/
 /linux/builddir/
 
-# Segredos
+# Secrets
 *.token
 .env

@@ -1,12 +1,12 @@
 #[derive(Debug, thiserror::Error, uniffi::Error)]
 pub enum OctoError {
-    #[error("falha de autenticação: {msg}")]
+    #[error("authentication failed: {msg}")]
     Auth { msg: String },
 
-    #[error("recurso não encontrado: {msg}")]
+    #[error("resource not found: {msg}")]
     NotFound { msg: String },
 
-    #[error("erro da API/rede: {msg}")]
+    #[error("API/network error: {msg}")]
     Api { msg: String },
 }
 
