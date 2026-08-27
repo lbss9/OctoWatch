@@ -14,8 +14,8 @@ internal static class UpdateService
         {
             try
             {
-                return Velopack.Locators.VelopackLocator.GetDefault(null).CurrentlyInstalledVersion
-                    is not null;
+                var manager = new UpdateManager(new GithubSource(RepoUrl, null, false));
+                return manager.IsInstalled;
             }
             catch
             {
