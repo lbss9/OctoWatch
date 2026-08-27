@@ -158,6 +158,14 @@ public sealed partial class MainWindow : Window
         ApplyGlassColors();
     }
 
+    /// <summary>Pré-visualiza valores sem salvar (usado ao arrastar o slider/toggle).</summary>
+    public void PreviewBackdrop(bool acrylic, int opacity)
+    {
+        _acrylicOn = acrylic;
+        _opacityPct = Math.Clamp(opacity, 0, 100);
+        ApplyGlassColors();
+    }
+
     private void UpdateGlassTheme()
     {
         if (_backdropConfig is null)

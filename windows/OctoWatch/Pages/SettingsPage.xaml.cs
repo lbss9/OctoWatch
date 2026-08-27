@@ -437,15 +437,19 @@ public sealed partial class SettingsPage : Page
         StartupRegistry.SetEnabled(StartupSwitch.IsOn);
     }
 
+    // Toggle/slider só ajustam a UI; o fundo só muda ao clicar "Aplicar".
     private void OnAcrylicToggled(object sender, RoutedEventArgs e)
     {
         if (_loading)
             return;
-        var settings = SettingsStore.Load();
-        settings.AcrylicEnabled = AcrylicSwitch.IsOn;
-        SettingsStore.Save(settings);
         SetOpacityPanelEnabled(AcrylicSwitch.IsOn);
-        App.Main?.ApplyBackdropSettings();
+    }
+
+    private void OnOpacityChanged(object sender, RangeBaseValueChangedEventArgs e)
+    {
+        if (_loading)
+            return;
+        OpacityValue.Text = $"{(int)e.NewValue}%";
     }
 
     private void SetOpacityPanelEnabled(bool enabled)
@@ -454,15 +458,23 @@ public sealed partial class SettingsPage : Page
         OpacityPanel.Opacity = enabled ? 1.0 : 0.5;
     }
 
-    private void OnOpacityChanged(object sender, RangeBaseValueChangedEventArgs e)
+    private void OnApplyTransparency(object sender, RoutedEventArgs e)
     {
-        if (_loading)
-            return;
         var settings = SettingsStore.Load();
-        settings.BackgroundOpacity = (int)e.NewValue;
+        settings.AcrylicEnabled = AcrylicSwitch.IsOn;
+        settings.BackgroundOpacity = (int)OpacitySlider.Value;
         SettingsStore.Save(settings);
-        OpacityValue.Text = $"{settings.BackgroundOpacity}%";
         App.Main?.ApplyBackdropSettings();
+    }
+
+    private void OnResetTransparency(object sender, RoutedEventArgs e)
+    {
+        _loading = true;
+        AcrylicSwitch.IsOn = true;
+        OpacitySlider.Value = 30;
+        _loading = false;
+        SetOpacityPanelEnabled(true);
+        OpacityValue.Text = "30%";
     }
 
     private void OnQuit(object sender, RoutedEventArgs e) => App.Main?.ExitApplication();

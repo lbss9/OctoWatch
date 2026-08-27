@@ -113,4 +113,6 @@
   <data name="Settings_AcrylicLabel.Text" xml:space="preserve"><value>Habilitar material acrílico</value></data>
   <data name="Settings_AcrylicDesc.Text" xml:space="preserve"><value>Aplica uma textura translúcida (vidro) ao fundo da janela.</value></data>
   <data name="Settings_OpacityLabel.Text" xml:space="preserve"><value>Opacidade de fundo</value></data>
+  <data name="Settings_Apply.Content" xml:space="preserve"><value>Aplicar</value></data>
+  <data name="Settings_ResetDefault.Content" xml:space="preserve"><value>Restaurar padrão</value></data>
 </root>

@@ -113,4 +113,6 @@
   <data name="Settings_AcrylicLabel.Text" xml:space="preserve"><value>Enable acrylic material</value></data>
   <data name="Settings_AcrylicDesc.Text" xml:space="preserve"><value>Applies a translucent (glass) texture to the window background.</value></data>
   <data name="Settings_OpacityLabel.Text" xml:space="preserve"><value>Background opacity</value></data>
+  <data name="Settings_Apply.Content" xml:space="preserve"><value>Apply</value></data>
+  <data name="Settings_ResetDefault.Content" xml:space="preserve"><value>Restore default</value></data>
 </root>
