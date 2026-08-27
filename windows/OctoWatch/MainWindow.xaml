@@ -45,6 +45,15 @@
       Background="Transparent"
       SelectionChanged="OnNavSelectionChanged"
     >
+      <!-- Deixa o pane e a área de conteúdo transparentes para o efeito vidro
+           aparecer de fato (senão o fundo próprio do NavigationView cobre o acrylic). -->
+      <NavigationView.Resources>
+        <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+        <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="Transparent" />
+        <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="Transparent" />
+        <SolidColorBrush x:Key="NavigationViewContentGridBorderBrush" Color="Transparent" />
+        <Thickness x:Key="NavigationViewContentGridBorderThickness">0</Thickness>
+      </NavigationView.Resources>
       <NavigationView.MenuItems>
         <NavigationViewItem x:Name="HomeNav" x:Uid="Nav_Home" Tag="home">
           <NavigationViewItem.Icon>

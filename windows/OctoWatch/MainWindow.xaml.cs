@@ -176,21 +176,32 @@ public sealed partial class MainWindow : Window
 
     private void ApplyGlassColors()
     {
-        if (_glass is null)
-            return;
         var dark = RootGrid.ActualTheme != ElementTheme.Light;
-        _glass.TintColor = dark
+        var baseColor = dark
             ? Color.FromArgb(255, 24, 24, 28)
             : Color.FromArgb(255, 243, 243, 243);
-        _glass.FallbackColor = dark
-            ? Color.FromArgb(255, 42, 42, 46)
-            : Color.FromArgb(255, 243, 243, 243);
 
-        // Acrílico ON: opacidade do slider vira o quão "vidro" fica (baixo = translúcido).
-        // Acrílico OFF: fundo opaco, sem blur.
-        var f = _acrylicOn ? _opacityPct / 100f : 1f;
-        _glass.LuminosityOpacity = f;
-        _glass.TintOpacity = _acrylicOn ? f * 0.6f : 1f;
+        // O acrylic controller fica com um vidro fosco fixo (bonito). A opacidade
+        // que o usuário controla é aplicada como uma CAMADA de alpha por cima —
+        // brush XAML é confiável, ao contrário do TintOpacity do controller.
+        if (_glass is not null)
+        {
+            _glass.TintColor = baseColor;
+            _glass.FallbackColor = dark
+                ? Color.FromArgb(255, 42, 42, 46)
+                : Color.FromArgb(255, 243, 243, 243);
+            _glass.TintOpacity = 0.15f;
+            _glass.LuminosityOpacity = 0.40f;
+        }
+
+        // Camada de opacidade sobre o vidro. Acrílico OFF (ou opacidade 100%) = opaco.
+        // Acrílico ON com opacidade baixa = bem translúcido (vê o desktop através).
+        var alpha = _acrylicOn && _glass is not null
+            ? (byte)Math.Clamp(_opacityPct * 255 / 100, 0, 255)
+            : (byte)255;
+        RootGrid.Background = new SolidColorBrush(
+            Color.FromArgb(alpha, baseColor.R, baseColor.G, baseColor.B)
+        );
     }
 
     private bool _allowClose;

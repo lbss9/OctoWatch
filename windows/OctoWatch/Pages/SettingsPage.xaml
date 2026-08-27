@@ -145,7 +145,15 @@
                 Style="{ThemeResource CaptionTextBlockStyle}"
               />
             </StackPanel>
-            <ToggleSwitch x:Name="AcrylicSwitch" Grid.Column="1" Toggled="OnAcrylicToggled" />
+            <ToggleSwitch
+              x:Name="AcrylicSwitch"
+              Grid.Column="1"
+              HorizontalAlignment="Right"
+              MinWidth="0"
+              OnContent=""
+              OffContent=""
+              Toggled="OnAcrylicToggled"
+            />
           </Grid>
 
           <StackPanel x:Name="OpacityPanel" Spacing="6">
@@ -188,7 +196,15 @@
             VerticalAlignment="Center"
             Style="{ThemeResource BodyTextBlockStyle}"
           />
-          <ToggleSwitch x:Name="StartupSwitch" Grid.Column="1" Toggled="OnStartupToggled" />
+          <ToggleSwitch
+            x:Name="StartupSwitch"
+            Grid.Column="1"
+            HorizontalAlignment="Right"
+            MinWidth="0"
+            OnContent=""
+            OffContent=""
+            Toggled="OnStartupToggled"
+          />
         </Grid>
       </Border>
 
