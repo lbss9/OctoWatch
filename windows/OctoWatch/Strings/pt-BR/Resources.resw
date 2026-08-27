@@ -91,8 +91,12 @@
   <data name="Settings_PollingHeader.Text" xml:space="preserve"><value>Intervalo de atualização</value></data>
   <data name="Polling_30s" xml:space="preserve"><value>30 segundos</value></data>
   <data name="Polling_1m" xml:space="preserve"><value>1 minuto</value></data>
+  <data name="Polling_2m" xml:space="preserve"><value>2 minutos</value></data>
   <data name="Polling_5m" xml:space="preserve"><value>5 minutos</value></data>
+  <data name="Polling_10m" xml:space="preserve"><value>10 minutos</value></data>
   <data name="Polling_15m" xml:space="preserve"><value>15 minutos</value></data>
+  <data name="Polling_30m" xml:space="preserve"><value>30 minutos</value></data>
+  <data name="Polling_1h" xml:space="preserve"><value>1 hora</value></data>
 
   <data name="Settings_LanguageHeader.Text" xml:space="preserve"><value>Idioma</value></data>
   <data name="Lang_PtBr" xml:space="preserve"><value>Português (Brasil)</value></data>

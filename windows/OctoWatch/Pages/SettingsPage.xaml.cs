@@ -76,10 +76,15 @@ public sealed partial class SettingsPage : Page
     private void FillPolling(int seconds)
     {
         PollingBox.Items.Clear();
+        // 30s is the fastest option we allow, to stay well within GitHub's rate limits.
         AddItem(PollingBox, Loc.Get("Polling_30s"), 30);
         AddItem(PollingBox, Loc.Get("Polling_1m"), 60);
+        AddItem(PollingBox, Loc.Get("Polling_2m"), 120);
         AddItem(PollingBox, Loc.Get("Polling_5m"), 300);
+        AddItem(PollingBox, Loc.Get("Polling_10m"), 600);
         AddItem(PollingBox, Loc.Get("Polling_15m"), 900);
+        AddItem(PollingBox, Loc.Get("Polling_30m"), 1800);
+        AddItem(PollingBox, Loc.Get("Polling_1h"), 3600);
         SelectTag(PollingBox, seconds);
     }
 
