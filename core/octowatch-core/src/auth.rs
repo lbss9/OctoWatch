@@ -14,7 +14,7 @@ static HTTP: Lazy<reqwest::Client> = Lazy::new(|| {
     reqwest::Client::builder()
         .user_agent(USER_AGENT)
         .build()
-        .expect("não foi possível criar o cliente HTTP do OctoWatch")
+        .expect("failed to create OctoWatch's HTTP client")
 });
 
 #[uniffi::export]
@@ -102,7 +102,7 @@ pub(crate) fn parse_device_code_response(body: &str) -> Result<DeviceCode, OctoE
     }
     if dto.user_code.is_empty() || dto.device_code.is_empty() {
         return Err(OctoError::Api {
-            msg: "resposta de device code incompleta".into(),
+            msg: "incomplete device code response".into(),
         });
     }
     Ok(DeviceCode {
@@ -139,7 +139,7 @@ pub(crate) fn parse_access_token_response(body: &str) -> Result<DeviceLoginStatu
             msg: dto.error_description.unwrap_or_else(|| other.to_string()),
         }),
         None => Err(OctoError::Api {
-            msg: "resposta OAuth sem token nem erro".into(),
+            msg: "OAuth response had neither token nor error".into(),
         }),
     }
 }
@@ -170,7 +170,7 @@ mod tests {
         let json = r#"{"error":"incorrect_client_credentials","error_description":"bad id"}"#;
         match parse_device_code_response(json) {
             Err(OctoError::Auth { msg }) => assert_eq!(msg, "bad id"),
-            other => panic!("inesperado: {other:?}"),
+            other => panic!("unexpected: {other:?}"),
         }
     }
 
@@ -179,7 +179,7 @@ mod tests {
         let json = r#"{"access_token":"gho_secret","token_type":"bearer","scope":"repo"}"#;
         match parse_access_token_response(json).unwrap() {
             DeviceLoginStatus::Authorized { token } => assert_eq!(token, "gho_secret"),
-            other => panic!("inesperado: {other:?}"),
+            other => panic!("unexpected: {other:?}"),
         }
     }
 

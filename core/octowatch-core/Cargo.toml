@@ -2,7 +2,7 @@
 name = "octowatch-core"
 version = "0.1.0"
 edition = "2021"
-description = "Núcleo compartilhado do OctoWatch: cliente e monitor da API do GitHub, exposto via UniFFI."
+description = "OctoWatch shared core: GitHub API client and monitor, exposed via UniFFI."
 license = "MIT"
 
 [lib]
