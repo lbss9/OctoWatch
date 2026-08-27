@@ -1,8 +1,5 @@
 using System.Runtime.InteropServices;
-using H.NotifyIcon;
 using Microsoft.UI;
-using Microsoft.UI.Composition;
-using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -10,7 +7,6 @@ using Microsoft.UI.Xaml.Media;
 using OctoWatch.Pages;
 using Windows.Graphics;
 using Windows.UI;
-using WinRT;
 
 namespace OctoWatch;
 
@@ -18,6 +14,10 @@ public sealed partial class MainWindow : Window
 {
     public const int FlyoutWidth = 460;
     public const int FlyoutHeight = 640;
+
+    private WindowBackdrop? _backdrop;
+    private TrayIconHost? _tray;
+    private bool _allowClose;
 
     public MainWindow()
     {
@@ -39,10 +39,10 @@ public sealed partial class MainWindow : Window
             presenter.IsResizable = false;
         }
 
-        TrySetGlassBackdrop();
+        _backdrop = WindowBackdrop.TryAttach(this, RootGrid);
         AppWindow.Closing += OnWindowClosing;
         AppWindow.Changed += OnWindowChanged;
-        SetupTray();
+        _tray = TrayIconHost.Create(ShowFromTray, ExitApplication);
         FeedMonitor.Instance.Start(DispatcherQueue);
         PositionBottomRight(FlyoutWidth, FlyoutHeight);
 
@@ -93,6 +93,10 @@ public sealed partial class MainWindow : Window
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
         SetForegroundWindow(hwnd);
     }
+
+    public void ApplyBackdropSettings() => _backdrop?.ApplyFromStore();
+
+    public void PreviewBackdrop(bool acrylic, int opacity) => _backdrop?.Preview(acrylic, opacity);
 
     private void OnNavSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
@@ -145,139 +149,6 @@ public sealed partial class MainWindow : Window
         int x = work.X + work.Width - width - margin;
         int y = work.Y + work.Height - height - margin;
         AppWindow.Move(new PointInt32(x, y));
-    }
-
-    private DesktopAcrylicController? _glass;
-    private SystemBackdropConfiguration? _backdropConfig;
-    private DispatcherQueueHelper? _dispatcherHelper;
-
-    private void TrySetGlassBackdrop()
-    {
-        if (!DesktopAcrylicController.IsSupported())
-            return;
-
-        _dispatcherHelper = new DispatcherQueueHelper();
-        _dispatcherHelper.EnsureDispatcherQueueController();
-
-        _backdropConfig = new SystemBackdropConfiguration { IsInputActive = true };
-        Activated += (_, e) =>
-            _backdropConfig.IsInputActive =
-                e.WindowActivationState != WindowActivationState.Deactivated;
-        Closed += (_, _) =>
-        {
-            _glass?.Dispose();
-            _glass = null;
-        };
-        RootGrid.ActualThemeChanged += (_, _) => UpdateGlassTheme();
-        UpdateGlassTheme();
-
-        _glass = new DesktopAcrylicController();
-        ApplyBackdropSettings();
-        _glass.AddSystemBackdropTarget(this.As<ICompositionSupportsSystemBackdrop>());
-        _glass.SetSystemBackdropConfiguration(_backdropConfig);
-    }
-
-    /// <summary>
-    /// Reloads acrylic/opacity from settings (Settings Apply button).
-    /// </summary>
-    public void ApplyBackdropSettings()
-    {
-        var settings = SettingsStore.Load();
-        _acrylicOn = settings.AcrylicEnabled;
-        _opacityPct = Math.Clamp(settings.BackgroundOpacity, 0, 100);
-        ApplyGlassColors();
-    }
-
-    /// <summary>Preview values without saving (kept for live tweaking).</summary>
-    public void PreviewBackdrop(bool acrylic, int opacity)
-    {
-        _acrylicOn = acrylic;
-        _opacityPct = Math.Clamp(opacity, 0, 100);
-        ApplyGlassColors();
-    }
-
-    private void UpdateGlassTheme()
-    {
-        if (_backdropConfig is null)
-            return;
-        _backdropConfig.Theme = RootGrid.ActualTheme switch
-        {
-            ElementTheme.Dark => SystemBackdropTheme.Dark,
-            ElementTheme.Light => SystemBackdropTheme.Light,
-            _ => SystemBackdropTheme.Default,
-        };
-        ApplyGlassColors();
-    }
-
-    private bool _acrylicOn = true;
-    private int _opacityPct = 30;
-
-    private void ApplyGlassColors()
-    {
-        var dark = RootGrid.ActualTheme != ElementTheme.Light;
-        var baseColor = dark
-            ? Color.FromArgb(255, 24, 24, 28)
-            : Color.FromArgb(255, 243, 243, 243);
-
-        // Keep the acrylic controller as a light blur. User opacity is a XAML
-        // alpha layer on top — TintOpacity on the controller is not reliable.
-        if (_glass is not null)
-        {
-            // Near-clear blur, Windows Terminal acrylic style. Real opacity
-            // comes from the overlay so it tracks the slider.
-            _glass.TintColor = baseColor;
-            _glass.FallbackColor = dark
-                ? Color.FromArgb(255, 42, 42, 46)
-                : Color.FromArgb(255, 243, 243, 243);
-            _glass.TintOpacity = 0.0f;
-            _glass.LuminosityOpacity = 0.10f;
-        }
-
-        // Opacity overlay (0–100%). Acrylic off (or 100%) is opaque; low values
-        // let the blurred desktop show through, Terminal-style.
-        var alpha = _acrylicOn && _glass is not null
-            ? (byte)Math.Clamp(_opacityPct * 255 / 100, 0, 255)
-            : (byte)255;
-        RootGrid.Background = new SolidColorBrush(
-            Color.FromArgb(alpha, baseColor.R, baseColor.G, baseColor.B)
-        );
-    }
-
-    private bool _allowClose;
-    private TaskbarIcon? _tray;
-
-    private void SetupTray()
-    {
-        var open = new MenuFlyoutItem { Text = Loc.Get("Tray_Open") };
-        open.Click += (_, _) => ShowFromTray();
-        var exit = new MenuFlyoutItem { Text = Loc.Get("Tray_Exit") };
-        exit.Click += (_, _) => ExitApplication();
-
-        var menu = new MenuFlyout();
-        menu.Items.Add(open);
-        menu.Items.Add(new MenuFlyoutSeparator());
-        menu.Items.Add(exit);
-
-        var iconPath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets", "OctoWatch.ico");
-        _tray = new TaskbarIcon
-        {
-            ToolTipText = "OctoWatch",
-            LeftClickCommand = new RelayCommand(ShowFromTray),
-            ContextFlyout = menu,
-            IconSource = new Microsoft.UI.Xaml.Media.Imaging.BitmapImage(
-                new Uri("ms-appx:///Assets/OctoWatch.ico")
-            ),
-        };
-        _tray.ForceCreate();
-        try
-        {
-            if (System.IO.File.Exists(iconPath))
-                _tray.Icon = new System.Drawing.Icon(iconPath, 32, 32);
-        }
-        catch
-        {
-            // Unpackaged ms-appx can yield a blank tray glyph; keep the BitmapImage.
-        }
     }
 
     private void OnWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)

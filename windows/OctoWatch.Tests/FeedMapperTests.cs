@@ -152,3 +152,39 @@ public class AppSettingsTests
         Assert.Equal("System", settings.Theme);
     }
 }
+
+public class FeedDiffTests
+{
+    [Fact]
+    public void Apply_inserts_updates_moves_and_removes()
+    {
+        var target = new System.Collections.ObjectModel.ObservableCollection<FeedItem>
+        {
+            Item("action", 1, "old"),
+            Item("action", 2, "keep"),
+            Item("pr", 3, "move-me"),
+        };
+
+        var desired = new List<FeedItem>
+        {
+            Item("pr", 3, "moved"),
+            Item("action", 2, "keep"),
+            Item("branch", 4, "new"),
+        };
+
+        FeedDiff.Apply(target, desired);
+
+        Assert.Equal(3, target.Count);
+        Assert.Equal("moved", target[0].Title);
+        Assert.Equal("keep", target[1].Title);
+        Assert.Equal("new", target[2].Title);
+    }
+
+    private static FeedItem Item(string kind, long id, string title) =>
+        kind switch
+        {
+            "pr" => new FeedItem(kind, "", title, "", "running", "", "o/r", PullNumber: id),
+            "branch" => new FeedItem(kind, "", title, "", "other", "", "o/r", BranchName: title),
+            _ => new FeedItem(kind, "", title, "", "success", "", "o/r", id),
+        };
+}

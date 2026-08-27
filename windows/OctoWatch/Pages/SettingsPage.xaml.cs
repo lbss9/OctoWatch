@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Navigation;
 using uniffi.octowatch_core;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.System;
 
 namespace OctoWatch.Pages;
 
@@ -177,7 +176,7 @@ public sealed partial class SettingsPage : Page
                 () => OctowatchCoreMethods.StartDeviceLogin(GitHubSession.DefaultScopes)
             );
             ShowDeviceCode(code);
-            await Launcher.LaunchUriAsync(new Uri(code.verificationUri));
+            await SafeUrl.OpenAsync(code.verificationUri);
             StartPollTimer();
         }
         catch (Exception ex)
@@ -281,7 +280,7 @@ public sealed partial class SettingsPage : Page
     private async void OnOpenGithub(object sender, RoutedEventArgs e)
     {
         if (!string.IsNullOrEmpty(_verificationUri))
-            await Launcher.LaunchUriAsync(new Uri(_verificationUri));
+            await SafeUrl.OpenAsync(_verificationUri);
     }
 
     private async void OnSignOut(object sender, RoutedEventArgs e)

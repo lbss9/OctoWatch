@@ -22,7 +22,7 @@
       <TextBlock x:Uid="About_License" Opacity="0.8" Style="{ThemeResource CaptionTextBlockStyle}" />
       <HyperlinkButton
         x:Uid="About_GitHubLink"
-        NavigateUri="https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#device-flow"
+        Click="OnGitHubLink"
       />
     </StackPanel>
   </ScrollViewer>

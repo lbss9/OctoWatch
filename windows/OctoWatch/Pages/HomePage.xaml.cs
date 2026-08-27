@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using uniffi.octowatch_core;
-using Windows.System;
 
 namespace OctoWatch.Pages;
 
@@ -116,8 +115,8 @@ public sealed partial class HomePage : Page
 
     private async void OnCardClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is FeedItem card && !string.IsNullOrEmpty(card.Url))
-            await Launcher.LaunchUriAsync(new Uri(card.Url));
+        if (e.ClickedItem is FeedItem card)
+            await SafeUrl.OpenAsync(card.Url);
     }
 
     private void OnCardMenuClick(object sender, RoutedEventArgs e)
@@ -210,11 +209,7 @@ public sealed partial class HomePage : Page
         OnRefresh(this, new RoutedEventArgs());
     }
 
-    private static async Task OpenUrl(string url)
-    {
-        if (!string.IsNullOrEmpty(url))
-            await Launcher.LaunchUriAsync(new Uri(url));
-    }
+    private static Task OpenUrl(string url) => SafeUrl.OpenAsync(url);
 
     private void ApplyRepoSource()
     {
