@@ -1,74 +1,54 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using uniffi.octowatch_core;
+using Windows.Graphics;
+using Windows.System;
 
 namespace OctoWatch;
 
-/// <summary>Item exibido na lista (achatado para binding simples no XAML).</summary>
-public sealed record ResultItem(string Primary, string Secondary, string Url);
+/// <summary>Card exibido na lista (workflow run = GitHub Action).</summary>
+public sealed record RunCard(string Title, string Subtitle, string State, string Url);
 
 public sealed partial class MainWindow : Window
 {
     public MainWindow()
     {
         this.InitializeComponent();
+
+        // Fundo Acrylic — o mesmo material semi-transparente do menu Iniciar do Win11.
+        SystemBackdrop = new DesktopAcrylicBackdrop();
+
+        // Title bar customizada com título próprio.
+        ExtendsContentIntoTitleBar = true;
+        SetTitleBar(AppTitleBar);
+        AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+        AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+
+        // Janela compacta, estilo flyout do OneDrive.
+        AppWindow.Resize(new SizeInt32(460, 640));
+
+        // Conveniência para testar rápido.
+        OwnerBox.Text = "cli";
+        RepoBox.Text = "cli";
+
+        // Carrega assim que a janela abre.
+        Activated += OnFirstActivated;
     }
 
-    private async void OnLoadPullRequests(object sender, RoutedEventArgs e) =>
-        await Load("Pull Requests", repo =>
-        {
-            var items = new List<ResultItem>();
-            foreach (var pr in Core(repo.Item1).ListPullRequests(repo.Item2))
-            {
-                var flag = pr.draft ? " · draft" : "";
-                items.Add(new ResultItem(
-                    $"#{pr.number}  {pr.title}",
-                    $"{pr.author} · {pr.state}{flag} · {pr.headBranch} → {pr.baseBranch}",
-                    pr.htmlUrl));
-            }
-            return items;
-        });
+    private bool _loaded;
+    private void OnFirstActivated(object sender, WindowActivatedEventArgs e)
+    {
+        if (_loaded) return;
+        _loaded = true;
+        OnRefresh(this, new RoutedEventArgs());
+    }
 
-    private async void OnLoadWorkflowRuns(object sender, RoutedEventArgs e) =>
-        await Load("Workflow Runs", repo =>
-        {
-            var items = new List<ResultItem>();
-            foreach (var run in Core(repo.Item1).ListWorkflowRuns(repo.Item2))
-            {
-                var result = run.conclusion ?? run.status;
-                items.Add(new ResultItem(
-                    $"{Glyph(run.conclusion, run.status)}  {run.name}",
-                    $"{result} · {run.branch} · {run.commitMessage}",
-                    run.htmlUrl));
-            }
-            return items;
-        });
-
-    private async void OnLoadBranches(object sender, RoutedEventArgs e) =>
-        await Load("Branches", repo =>
-        {
-            var items = new List<ResultItem>();
-            foreach (var b in Core(repo.Item1).ListBranches(repo.Item2))
-            {
-                var prot = b.@protected ? " · protegida" : "";
-                items.Add(new ResultItem(b.name, $"{b.lastCommitSha[..7]}{prot}", ""));
-            }
-            return items;
-        });
-
-    // -----------------------------------------------------------------
-
-    /// <summary>Cria o cliente do núcleo Rust com o token informado.</summary>
-    private static Client Core(string token) => new Client(token);
-
-    /// <summary>
-    /// Executa a chamada bloqueante fora da thread de UI e atualiza a lista.
-    /// O tuple carrega (token, repo) para a lambda.
-    /// </summary>
-    private async Task Load(string what, Func<(string, Repo), List<ResultItem>> work)
+    private async void OnRefresh(object sender, RoutedEventArgs e)
     {
         var owner = OwnerBox.Text.Trim();
         var name = RepoBox.Text.Trim();
@@ -80,17 +60,32 @@ public sealed partial class MainWindow : Window
             return;
         }
 
-        SetBusy(true, $"Carregando {what} de {owner}/{name}…");
+        SetBusy(true, $"Carregando GitHub Actions de {owner}/{name}…");
         try
         {
-            var repo = new Repo(owner, name);
-            var items = await Task.Run(() => work((token, repo)));
-            ResultsList.ItemsSource = items;
-            StatusText.Text = $"{items.Count} {what.ToLower()} · {owner}/{name}";
+            var cards = await Task.Run(() =>
+            {
+                var client = new Client(token);
+                var result = new List<RunCard>();
+                foreach (var run in client.ListWorkflowRuns(new Repo(owner, name)))
+                {
+                    var state = MapState(run.status, run.conclusion);
+                    var detail = run.conclusion ?? run.status;
+                    result.Add(new RunCard(
+                        Title: string.IsNullOrEmpty(run.name) ? run.commitMessage : run.name,
+                        Subtitle: $"{run.branch} · {detail} · {run.commitMessage}",
+                        State: state,
+                        Url: run.htmlUrl));
+                }
+                return result;
+            });
+
+            RunsList.ItemsSource = cards;
+            StatusText.Text = $"{cards.Count} runs · {owner}/{name}";
         }
         catch (Exception ex)
         {
-            ResultsList.ItemsSource = null;
+            RunsList.ItemsSource = null;
             StatusText.Text = $"Erro: {ex.Message}";
         }
         finally
@@ -99,24 +94,28 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    private async void OnCardClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is RunCard card && !string.IsNullOrEmpty(card.Url))
+            await Launcher.LaunchUriAsync(new Uri(card.Url));
+    }
+
     private void SetBusy(bool busy, string? status)
     {
         Spinner.IsActive = busy;
-        PrButton.IsEnabled = !busy;
-        RunsButton.IsEnabled = !busy;
-        BranchesButton.IsEnabled = !busy;
+        RefreshButton.IsEnabled = !busy;
         if (status is not null) StatusText.Text = status;
     }
 
-    private static string Glyph(string? conclusion, string status)
+    /// <summary>Traduz status/conclusion do GitHub para o estado da bolinha.</summary>
+    private static string MapState(string status, string? conclusion)
     {
-        if (status != "completed") return "•";
+        if (status != "completed") return "running"; // queued | in_progress
         return conclusion switch
         {
-            "success" => "✓",
-            "failure" => "✗",
-            "cancelled" => "⊘",
-            _ => "•",
+            "success" => "success",
+            "failure" or "timed_out" or "startup_failure" or "action_required" => "failure",
+            _ => "other", // cancelled | skipped | neutral | null
         };
     }
 }
