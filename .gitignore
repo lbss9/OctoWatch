@@ -1,0 +1,26 @@
+# Rust
+/core/target/
+**/*.rs.bk
+
+# Bindings gerados (regeráveis via scripts/gen-bindings)
+/macos/Sources/OctoWatch/Generated/
+/windows/OctoWatch/Interop/
+/windows/OctoWatch/octowatch_core.dll
+
+# .NET
+[Bb]in/
+[Oo]bj/
+*.user
+
+# macOS / Xcode
+.DS_Store
+/macos/.build/
+/macos/*.xcodeproj/xcuserdata/
+
+# Linux / meson
+/linux/target/
+/linux/builddir/
+
+# Segredos
+*.token
+.env

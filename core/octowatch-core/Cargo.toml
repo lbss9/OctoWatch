@@ -1,0 +1,26 @@
+[package]
+name = "octowatch-core"
+version = "0.1.0"
+edition = "2021"
+description = "Núcleo compartilhado do OctoWatch: cliente e monitor da API do GitHub, exposto via UniFFI."
+license = "MIT"
+
+[lib]
+name = "octowatch_core"
+# cdylib -> Windows (.dll, P/Invoke via uniffi-bindgen-cs)
+# staticlib -> macOS (link estático + bindings Swift do UniFFI)
+# lib (rlib) -> Linux (linkado direto pela UI em Rust/gtk4-rs)
+crate-type = ["cdylib", "staticlib", "lib"]
+
+[dependencies]
+uniffi = { version = "0.28", features = ["cli"] }
+octocrab = "0.44"
+tokio = { version = "1", features = ["rt-multi-thread"] }
+serde = { version = "1", features = ["derive"] }
+thiserror = "2"
+once_cell = "1"
+
+[[bin]]
+# Binário auxiliar usado só para gerar bindings (uniffi-bindgen).
+name = "uniffi-bindgen"
+path = "src/bin/uniffi-bindgen.rs"
