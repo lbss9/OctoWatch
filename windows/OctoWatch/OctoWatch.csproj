@@ -18,6 +18,7 @@
     <EnableMsixTooling>true</EnableMsixTooling>
     <DefaultLanguage>pt-BR</DefaultLanguage>
     <Version>0.1.0</Version>
+    <ApplicationIcon>Assets\OctoWatch.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,5 +35,8 @@
 
   <ItemGroup>
     <Content Include="..\..\CHANGELOG.md" Link="CHANGELOG.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Assets\OctoWatch.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

@@ -28,6 +28,11 @@ public sealed partial class MainWindow : Window
         AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
         AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
+        // System window icon (taskbar, alt-tab, title bar).
+        var iconPath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets", "OctoWatch.ico");
+        if (System.IO.File.Exists(iconPath))
+            AppWindow.SetIcon(iconPath);
+
         if (AppWindow.Presenter is OverlappedPresenter presenter)
         {
             presenter.IsMaximizable = false;
@@ -256,18 +261,26 @@ public sealed partial class MainWindow : Window
         menu.Items.Add(new MenuFlyoutSeparator());
         menu.Items.Add(exit);
 
+        var iconPath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets", "OctoWatch.ico");
         _tray = new TaskbarIcon
         {
             ToolTipText = "OctoWatch",
             LeftClickCommand = new RelayCommand(ShowFromTray),
             ContextFlyout = menu,
-            IconSource = new GeneratedIconSource
-            {
-                Text = "O",
-                Foreground = new SolidColorBrush(Colors.White),
-            },
+            IconSource = new Microsoft.UI.Xaml.Media.Imaging.BitmapImage(
+                new Uri("ms-appx:///Assets/OctoWatch.ico")
+            ),
         };
         _tray.ForceCreate();
+        try
+        {
+            if (System.IO.File.Exists(iconPath))
+                _tray.Icon = new System.Drawing.Icon(iconPath, 32, 32);
+        }
+        catch
+        {
+            // Unpackaged ms-appx can yield a blank tray glyph; keep the BitmapImage.
+        }
     }
 
     private void OnWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)

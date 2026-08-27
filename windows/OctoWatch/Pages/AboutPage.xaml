@@ -6,11 +6,11 @@
 >
   <ScrollViewer Padding="12,8,12,16">
     <StackPanel Spacing="12" MaxWidth="420">
-      <FontIcon
-        Glyph="&#xE945;"
-        FontSize="32"
+      <Image
+        Width="32"
+        Height="32"
         HorizontalAlignment="Left"
-        Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+        Source="ms-appx:///Assets/OctoWatch.ico"
       />
       <TextBlock Text="OctoWatch" Style="{ThemeResource TitleTextBlockStyle}" />
       <TextBlock x:Name="VersionText" Opacity="0.8" Style="{ThemeResource BodyTextBlockStyle}" />
