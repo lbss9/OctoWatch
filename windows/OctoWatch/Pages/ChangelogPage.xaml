@@ -5,11 +5,10 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 >
   <ScrollViewer Padding="12,8,12,16">
-    <TextBlock
-      x:Name="ChangelogText"
+    <RichTextBlock
+      x:Name="MarkdownView"
       TextWrapping="Wrap"
       IsTextSelectionEnabled="True"
-      Style="{ThemeResource BodyTextBlockStyle}"
     />
   </ScrollViewer>
 </Page>
