@@ -36,8 +36,10 @@ scripts/  build-core, gen-bindings  (.ps1 e .sh)
 - [x] **Núcleo Rust**: `Client` com `login/whoami`, `list_workflow_runs`, `list_pull_requests`,
       `list_branches`, `list_commits`. Testes de integração contra a API real passando.
 - [x] **Geração de bindings** Swift e C# validada (superfície FFI correta nas duas linguagens).
-- [ ] App Windows (WinUI 3) — próximo.
-- [ ] Motor de polling + notificações no núcleo.
+- [x] **App Windows (WinUI 3)**: janela lista PRs/workflow runs/branches reais via núcleo. Build e
+      execução OK. Smoke test de FFI em `windows/smoketest` (C# → Rust → GitHub) passando.
+- [ ] Windows: ícone na bandeja (tray) + notificações de mudança de status.
+- [ ] Motor de polling no núcleo.
 - [ ] Apps Linux e macOS.
 
 ## Como buildar

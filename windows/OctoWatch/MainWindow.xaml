@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="OctoWatch.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OctoWatch"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="OctoWatch">
+
+    <Grid Padding="16" RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Entradas -->
+        <Grid Grid.Row="0" ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="OwnerBox" Grid.Column="0" Header="Owner" PlaceholderText="cli" />
+            <TextBox x:Name="RepoBox" Grid.Column="1" Header="Repositório" PlaceholderText="cli" />
+            <PasswordBox x:Name="TokenBox" Grid.Column="2" Header="Token (opcional)"
+                         PlaceholderText="ghp_… (deixe vazio p/ dados públicos)" />
+        </Grid>
+
+        <!-- Ações -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8">
+            <Button x:Name="PrButton" Content="Pull Requests" Click="OnLoadPullRequests" />
+            <Button x:Name="RunsButton" Content="Workflow Runs" Click="OnLoadWorkflowRuns" />
+            <Button x:Name="BranchesButton" Content="Branches" Click="OnLoadBranches" />
+            <ProgressRing x:Name="Spinner" IsActive="False" Width="20" Height="20" />
+        </StackPanel>
+
+        <!-- Resultados -->
+        <ListView x:Name="ResultsList" Grid.Row="2"
+                  SelectionMode="None"
+                  BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                  CornerRadius="8">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:ResultItem">
+                    <StackPanel Padding="4" Spacing="2">
+                        <TextBlock Text="{x:Bind Primary}" TextWrapping="NoWrap"
+                                   Style="{ThemeResource BodyStrongTextBlockStyle}" />
+                        <TextBlock Text="{x:Bind Secondary}" Opacity="0.7"
+                                   Style="{ThemeResource CaptionTextBlockStyle}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <TextBlock x:Name="StatusText" Grid.Row="3" Opacity="0.8"
+                   Style="{ThemeResource CaptionTextBlockStyle}" Text="Pronto." />
+    </Grid>
+</Window>
