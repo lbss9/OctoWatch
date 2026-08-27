@@ -10,7 +10,11 @@ public sealed class RelayCommand : ICommand
 
     public RelayCommand(Action execute) => _execute = execute;
 
-    public event EventHandler? CanExecuteChanged { add { } remove { } }
+    public event EventHandler? CanExecuteChanged
+    {
+        add { }
+        remove { }
+    }
 
     public bool CanExecute(object? parameter) => true;
 

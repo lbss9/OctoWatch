@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using H.NotifyIcon;
 using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -10,6 +12,8 @@ using Microsoft.UI.Xaml.Media;
 using uniffi.octowatch_core;
 using Windows.Graphics;
 using Windows.System;
+using Windows.UI;
+using WinRT;
 
 namespace OctoWatch;
 
@@ -22,19 +26,25 @@ public sealed partial class MainWindow : Window
     {
         this.InitializeComponent();
 
-        // Fundo Mica — tinge com o wallpaper do desktop (material de janela do Win11).
-        SystemBackdrop = new MicaBackdrop();
+        // Barra de título nativa (botões min/max/close do sistema) com título próprio.
+        ExtendsContentIntoTitleBar = true;
+        SetTitleBar(AppTitleBar);
+        AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+        AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
-        // Remove a title bar do sistema (min/max/close nativos); mantém só a borda.
-        // Desenhamos nossa própria barra com botões minimizar/fechar -> bandeja.
+        // Maximizar desativado; mantém minimizar e fechar.
         if (AppWindow.Presenter is OverlappedPresenter presenter)
         {
-            presenter.SetBorderAndTitleBar(true, false);
+            presenter.IsMaximizable = false;
             presenter.IsResizable = false;
         }
 
-        // Alt+F4 / fechar programático também vão para a bandeja (app segue rodando).
+        // Efeito vidro: Acrylic translúcido customizado (blur nativo).
+        TrySetGlassBackdrop();
+
+        // Fechar e minimizar recolhem para a bandeja (o app continua rodando).
         AppWindow.Closing += OnWindowClosing;
+        AppWindow.Changed += OnWindowChanged;
         SetupTray();
 
         // Janela compacta ancorada no canto inferior direito, estilo flyout do OneDrive.
@@ -145,6 +155,63 @@ public sealed partial class MainWindow : Window
         };
     }
 
+    // --- Efeito vidro (Acrylic customizado) -----------------------------
+
+    private DesktopAcrylicController? _glass;
+    private SystemBackdropConfiguration? _backdropConfig;
+    private DispatcherQueueHelper? _dispatcherHelper;
+
+    /// <summary>
+    /// Aplica um Acrylic translúcido (vidro com blur) via controller próprio,
+    /// com opacidades baixas para ficar bem transparente — estilo TranslucentTB.
+    /// </summary>
+    private void TrySetGlassBackdrop()
+    {
+        if (!DesktopAcrylicController.IsSupported())
+            return; // sem suporte (ex.: RDP antigo) — janela fica com cor sólida de fallback
+
+        _dispatcherHelper = new DispatcherQueueHelper();
+        _dispatcherHelper.EnsureDispatcherQueueController();
+
+        _backdropConfig = new SystemBackdropConfiguration { IsInputActive = true };
+        Activated += (_, e) =>
+            _backdropConfig.IsInputActive =
+                e.WindowActivationState != WindowActivationState.Deactivated;
+        Closed += (_, _) =>
+        {
+            _glass?.Dispose();
+            _glass = null;
+        };
+        if (Content is FrameworkElement root)
+        {
+            root.ActualThemeChanged += (_, _) => UpdateGlassTheme(root);
+            UpdateGlassTheme(root);
+        }
+
+        _glass = new DesktopAcrylicController
+        {
+            // Opacidades baixas = mais "vidro" (vê-se o desktop através, com blur).
+            TintColor = Color.FromArgb(255, 24, 24, 28),
+            TintOpacity = 0.15f,
+            LuminosityOpacity = 0.25f,
+            FallbackColor = Color.FromArgb(255, 42, 42, 46),
+        };
+        _glass.AddSystemBackdropTarget(this.As<ICompositionSupportsSystemBackdrop>());
+        _glass.SetSystemBackdropConfiguration(_backdropConfig);
+    }
+
+    private void UpdateGlassTheme(FrameworkElement root)
+    {
+        if (_backdropConfig is null)
+            return;
+        _backdropConfig.Theme = root.ActualTheme switch
+        {
+            ElementTheme.Dark => SystemBackdropTheme.Dark,
+            ElementTheme.Light => SystemBackdropTheme.Light,
+            _ => SystemBackdropTheme.Default,
+        };
+    }
+
     // --- Bandeja (tray) -------------------------------------------------
 
     private bool _allowClose;
@@ -186,12 +253,30 @@ public sealed partial class MainWindow : Window
         HideToTray();
     }
 
-    // Botões custom da barra: ambos recolhem para a bandeja.
-    private void OnMinimize(object sender, RoutedEventArgs e) => HideToTray();
+    /// <summary>Minimizar (botão nativo) também recolhe para a bandeja.</summary>
+    private void OnWindowChanged(AppWindow sender, AppWindowChangedEventArgs args)
+    {
+        if (
+            AppWindow.Presenter is OverlappedPresenter p
+            && p.State == OverlappedPresenterState.Minimized
+        )
+        {
+            HideToTray();
+        }
+    }
 
-    private void OnClose(object sender, RoutedEventArgs e) => HideToTray();
-
-    private void HideToTray() => AppWindow.Hide();
+    private void HideToTray()
+    {
+        // Sai do estado minimizado para reabrir "restaurado" da próxima vez.
+        if (
+            AppWindow.Presenter is OverlappedPresenter p
+            && p.State == OverlappedPresenterState.Minimized
+        )
+        {
+            p.Restore();
+        }
+        AppWindow.Hide();
+    }
 
     private void ShowFromTray()
     {

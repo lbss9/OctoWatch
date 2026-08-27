@@ -16,10 +16,12 @@ public sealed partial class StatusDot : UserControl
         this.InitializeComponent();
     }
 
-    public static readonly DependencyProperty StateProperty =
-        DependencyProperty.Register(
-            nameof(State), typeof(string), typeof(StatusDot),
-            new PropertyMetadata("other", OnStateChanged));
+    public static readonly DependencyProperty StateProperty = DependencyProperty.Register(
+        nameof(State),
+        typeof(string),
+        typeof(StatusDot),
+        new PropertyMetadata("other", OnStateChanged)
+    );
 
     /// <summary>success | failure | running | other</summary>
     public string State
@@ -42,7 +44,7 @@ public sealed partial class StatusDot : UserControl
             "success" => Color.FromArgb(0xFF, 0x2E, 0xA0, 0x43), // verde
             "failure" => Color.FromArgb(0xFF, 0xD6, 0x3B, 0x3B), // vermelho
             "running" => Color.FromArgb(0xFF, 0xE3, 0xB3, 0x41), // amarelo
-            _ => Color.FromArgb(0xFF, 0x9A, 0x9A, 0x9A),         // cinza
+            _ => Color.FromArgb(0xFF, 0x9A, 0x9A, 0x9A), // cinza
         };
 
         var brush = new SolidColorBrush(color);
