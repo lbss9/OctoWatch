@@ -154,7 +154,7 @@ public sealed partial class MainWindow : Window
     {
         var settings = SettingsStore.Load();
         _acrylicOn = settings.AcrylicEnabled;
-        _opacityPct = Math.Clamp(settings.BackgroundOpacity, 10, 100);
+        _opacityPct = Math.Clamp(settings.BackgroundOpacity, 0, 100);
         ApplyGlassColors();
     }
 
@@ -186,16 +186,18 @@ public sealed partial class MainWindow : Window
         // brush XAML é confiável, ao contrário do TintOpacity do controller.
         if (_glass is not null)
         {
+            // Vidro limpo (blur quase sem fosco), estilo acrylic do Windows Terminal.
+            // A opacidade real vem da camada de alpha por cima, para bater com o Terminal.
             _glass.TintColor = baseColor;
             _glass.FallbackColor = dark
                 ? Color.FromArgb(255, 42, 42, 46)
                 : Color.FromArgb(255, 243, 243, 243);
-            _glass.TintOpacity = 0.15f;
-            _glass.LuminosityOpacity = 0.40f;
+            _glass.TintOpacity = 0.0f;
+            _glass.LuminosityOpacity = 0.10f;
         }
 
-        // Camada de opacidade sobre o vidro. Acrílico OFF (ou opacidade 100%) = opaco.
-        // Acrílico ON com opacidade baixa = bem translúcido (vê o desktop através).
+        // Camada de opacidade sobre o vidro (0–100%). Acrílico OFF (ou 100%) = opaco;
+        // opacidade baixa = bem translúcido, vendo o desktop borrado através (como o Terminal).
         var alpha = _acrylicOn && _glass is not null
             ? (byte)Math.Clamp(_opacityPct * 255 / 100, 0, 255)
             : (byte)255;
