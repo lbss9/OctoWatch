@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -29,8 +30,8 @@ public sealed partial class MainWindow : Window
         AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
         AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
-        // Janela compacta, estilo flyout do OneDrive.
-        AppWindow.Resize(new SizeInt32(460, 640));
+        // Janela compacta ancorada no canto inferior direito, estilo flyout do OneDrive.
+        PositionBottomRight(460, 640);
 
         // Conveniência para testar rápido.
         OwnerBox.Text = "cli";
@@ -38,6 +39,17 @@ public sealed partial class MainWindow : Window
 
         // Carrega assim que a janela abre.
         Activated += OnFirstActivated;
+    }
+
+    /// <summary>Ancora a janela no canto inferior direito da área de trabalho (acima da barra de tarefas).</summary>
+    private void PositionBottomRight(int width, int height)
+    {
+        AppWindow.Resize(new SizeInt32(width, height));
+        var work = DisplayArea.GetFromWindowId(AppWindow.Id, DisplayAreaFallback.Nearest).WorkArea;
+        const int margin = 12;
+        int x = work.X + work.Width - width - margin;
+        int y = work.Y + work.Height - height - margin;
+        AppWindow.Move(new PointInt32(x, y));
     }
 
     private bool _loaded;
