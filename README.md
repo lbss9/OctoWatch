@@ -36,9 +36,11 @@ scripts/  build-core, gen-bindings  (.ps1 e .sh)
 - [x] **Núcleo Rust**: `Client` com `login/whoami`, `list_workflow_runs`, `list_pull_requests`,
       `list_branches`, `list_commits`. Testes de integração contra a API real passando.
 - [x] **Geração de bindings** Swift e C# validada (superfície FFI correta nas duas linguagens).
-- [x] **App Windows (WinUI 3)**: janela lista PRs/workflow runs/branches reais via núcleo. Build e
-      execução OK. Smoke test de FFI em `windows/smoketest` (C# → Rust → GitHub) passando.
-- [ ] Windows: ícone na bandeja (tray) + notificações de mudança de status.
+- [x] **App Windows (WinUI 3)**: flyout ancorado no canto inferior direito, fundo **Mica**, barra de
+      título própria (só minimizar + fechar, sem maximizar), aba **GitHub Actions** com cards de
+      workflow runs e bolinha de status. Fechar/minimizar recolhem para a **bandeja** (ícone com menu
+      Abrir/Sair). Smoke test de FFI em `windows/smoketest` passando.
+- [ ] Windows: notificações de mudança de status (toast).
 - [ ] Motor de polling no núcleo.
 - [ ] Apps Linux e macOS.
 

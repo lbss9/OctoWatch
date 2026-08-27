@@ -16,12 +16,26 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Title bar customizada (arrastável) -->
-        <Grid x:Name="AppTitleBar" Grid.Row="0" Height="44" Padding="14,0">
+        <!-- Barra de título própria: título à esquerda, botões à direita (sem maximizar) -->
+        <Grid Grid.Row="0" Height="44" Padding="14,0,6,0">
             <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                 <FontIcon Glyph="&#xE945;" FontSize="16" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
                 <TextBlock Text="OctoWatch" VerticalAlignment="Center"
                            Style="{ThemeResource BodyStrongTextBlockStyle}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
+                        VerticalAlignment="Center" Spacing="2">
+                <Button Click="OnMinimize" Width="40" Height="30" Padding="0"
+                        Background="Transparent" BorderThickness="0"
+                        ToolTipService.ToolTip="Minimizar para a bandeja">
+                    <FontIcon Glyph="&#xE921;" FontSize="12" />
+                </Button>
+                <Button Click="OnClose" Width="40" Height="30" Padding="0"
+                        Background="Transparent" BorderThickness="0"
+                        ToolTipService.ToolTip="Fechar para a bandeja">
+                    <FontIcon Glyph="&#xE8BB;" FontSize="12" />
+                </Button>
             </StackPanel>
         </Grid>
 

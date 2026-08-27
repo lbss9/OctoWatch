@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using H.NotifyIcon;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -21,14 +22,20 @@ public sealed partial class MainWindow : Window
     {
         this.InitializeComponent();
 
-        // Fundo Acrylic — o mesmo material semi-transparente do menu Iniciar do Win11.
-        SystemBackdrop = new DesktopAcrylicBackdrop();
+        // Fundo Mica — tinge com o wallpaper do desktop (material de janela do Win11).
+        SystemBackdrop = new MicaBackdrop();
 
-        // Title bar customizada com título próprio.
-        ExtendsContentIntoTitleBar = true;
-        SetTitleBar(AppTitleBar);
-        AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
-        AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+        // Remove a title bar do sistema (min/max/close nativos); mantém só a borda.
+        // Desenhamos nossa própria barra com botões minimizar/fechar -> bandeja.
+        if (AppWindow.Presenter is OverlappedPresenter presenter)
+        {
+            presenter.SetBorderAndTitleBar(true, false);
+            presenter.IsResizable = false;
+        }
+
+        // Alt+F4 / fechar programático também vão para a bandeja (app segue rodando).
+        AppWindow.Closing += OnWindowClosing;
+        SetupTray();
 
         // Janela compacta ancorada no canto inferior direito, estilo flyout do OneDrive.
         PositionBottomRight(460, 640);
@@ -53,9 +60,11 @@ public sealed partial class MainWindow : Window
     }
 
     private bool _loaded;
+
     private void OnFirstActivated(object sender, WindowActivatedEventArgs e)
     {
-        if (_loaded) return;
+        if (_loaded)
+            return;
         _loaded = true;
         OnRefresh(this, new RoutedEventArgs());
     }
@@ -83,11 +92,14 @@ public sealed partial class MainWindow : Window
                 {
                     var state = MapState(run.status, run.conclusion);
                     var detail = run.conclusion ?? run.status;
-                    result.Add(new RunCard(
-                        Title: string.IsNullOrEmpty(run.name) ? run.commitMessage : run.name,
-                        Subtitle: $"{run.branch} · {detail} · {run.commitMessage}",
-                        State: state,
-                        Url: run.htmlUrl));
+                    result.Add(
+                        new RunCard(
+                            Title: string.IsNullOrEmpty(run.name) ? run.commitMessage : run.name,
+                            Subtitle: $"{run.branch} · {detail} · {run.commitMessage}",
+                            State: state,
+                            Url: run.htmlUrl
+                        )
+                    );
                 }
                 return result;
             });
@@ -116,13 +128,15 @@ public sealed partial class MainWindow : Window
     {
         Spinner.IsActive = busy;
         RefreshButton.IsEnabled = !busy;
-        if (status is not null) StatusText.Text = status;
+        if (status is not null)
+            StatusText.Text = status;
     }
 
     /// <summary>Traduz status/conclusion do GitHub para o estado da bolinha.</summary>
     private static string MapState(string status, string? conclusion)
     {
-        if (status != "completed") return "running"; // queued | in_progress
+        if (status != "completed")
+            return "running"; // queued | in_progress
         return conclusion switch
         {
             "success" => "success",
@@ -130,4 +144,72 @@ public sealed partial class MainWindow : Window
             _ => "other", // cancelled | skipped | neutral | null
         };
     }
+
+    // --- Bandeja (tray) -------------------------------------------------
+
+    private bool _allowClose;
+    private TaskbarIcon? _tray;
+
+    /// <summary>Cria o ícone da bandeja em código (evita o markup do H.NotifyIcon no XAML).</summary>
+    private void SetupTray()
+    {
+        var open = new MenuFlyoutItem { Text = "Abrir" };
+        open.Click += OnTrayOpen;
+        var exit = new MenuFlyoutItem { Text = "Sair" };
+        exit.Click += OnTrayExit;
+
+        var menu = new MenuFlyout();
+        menu.Items.Add(open);
+        menu.Items.Add(new MenuFlyoutSeparator());
+        menu.Items.Add(exit);
+
+        _tray = new TaskbarIcon
+        {
+            ToolTipText = "OctoWatch",
+            LeftClickCommand = new RelayCommand(ShowFromTray),
+            ContextFlyout = menu,
+            IconSource = new GeneratedIconSource
+            {
+                Text = "O",
+                Foreground = new SolidColorBrush(Colors.White),
+            },
+        };
+        _tray.ForceCreate();
+    }
+
+    /// <summary>Interceta o X: em vez de sair, esconde para a bandeja.</summary>
+    private void OnWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)
+    {
+        if (_allowClose)
+            return; // saída real (menu "Sair")
+        args.Cancel = true;
+        HideToTray();
+    }
+
+    // Botões custom da barra: ambos recolhem para a bandeja.
+    private void OnMinimize(object sender, RoutedEventArgs e) => HideToTray();
+
+    private void OnClose(object sender, RoutedEventArgs e) => HideToTray();
+
+    private void HideToTray() => AppWindow.Hide();
+
+    private void ShowFromTray()
+    {
+        PositionBottomRight(460, 640);
+        AppWindow.Show();
+        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+        SetForegroundWindow(hwnd);
+    }
+
+    private void OnTrayOpen(object sender, RoutedEventArgs e) => ShowFromTray();
+
+    private void OnTrayExit(object sender, RoutedEventArgs e)
+    {
+        _allowClose = true;
+        _tray?.Dispose();
+        this.Close();
+    }
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
 }
