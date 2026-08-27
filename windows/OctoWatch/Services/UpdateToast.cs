@@ -85,9 +85,7 @@ internal static class UpdateToast
             App.Main?.ShowFromTray();
             if (string.IsNullOrEmpty(encoded))
                 return;
-            var url = Uri.UnescapeDataString(encoded);
-            if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
-                await Launcher.LaunchUriAsync(uri);
+            await SafeUrl.OpenAsync(Uri.UnescapeDataString(encoded));
         });
     }
 }
