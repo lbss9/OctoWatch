@@ -141,9 +141,21 @@ public sealed partial class MainWindow : Window
         UpdateGlassTheme();
 
         _glass = new DesktopAcrylicController();
-        ApplyGlassColors();
+        ApplyBackdropSettings();
         _glass.AddSystemBackdropTarget(this.As<ICompositionSupportsSystemBackdrop>());
         _glass.SetSystemBackdropConfiguration(_backdropConfig);
+    }
+
+    /// <summary>
+    /// Relê as preferências de transparência e reaplica ao vivo (chamado pela
+    /// tela de Configurações quando o usuário mexe no slider/toggle).
+    /// </summary>
+    public void ApplyBackdropSettings()
+    {
+        var settings = SettingsStore.Load();
+        _acrylicOn = settings.AcrylicEnabled;
+        _opacityPct = Math.Clamp(settings.BackgroundOpacity, 10, 100);
+        ApplyGlassColors();
     }
 
     private void UpdateGlassTheme()
@@ -159,25 +171,26 @@ public sealed partial class MainWindow : Window
         ApplyGlassColors();
     }
 
+    private bool _acrylicOn = true;
+    private int _opacityPct = 30;
+
     private void ApplyGlassColors()
     {
         if (_glass is null)
             return;
         var dark = RootGrid.ActualTheme != ElementTheme.Light;
-        if (dark)
-        {
-            _glass.TintColor = Color.FromArgb(255, 24, 24, 28);
-            _glass.TintOpacity = 0.15f;
-            _glass.LuminosityOpacity = 0.25f;
-            _glass.FallbackColor = Color.FromArgb(255, 42, 42, 46);
-        }
-        else
-        {
-            _glass.TintColor = Color.FromArgb(255, 243, 243, 243);
-            _glass.TintOpacity = 0.15f;
-            _glass.LuminosityOpacity = 0.35f;
-            _glass.FallbackColor = Color.FromArgb(255, 243, 243, 243);
-        }
+        _glass.TintColor = dark
+            ? Color.FromArgb(255, 24, 24, 28)
+            : Color.FromArgb(255, 243, 243, 243);
+        _glass.FallbackColor = dark
+            ? Color.FromArgb(255, 42, 42, 46)
+            : Color.FromArgb(255, 243, 243, 243);
+
+        // Acrílico ON: opacidade do slider vira o quão "vidro" fica (baixo = translúcido).
+        // Acrílico OFF: fundo opaco, sem blur.
+        var f = _acrylicOn ? _opacityPct / 100f : 1f;
+        _glass.LuminosityOpacity = f;
+        _glass.TintOpacity = _acrylicOn ? f * 0.6f : 1f;
     }
 
     private bool _allowClose;

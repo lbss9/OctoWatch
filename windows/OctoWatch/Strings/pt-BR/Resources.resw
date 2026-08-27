@@ -109,4 +109,8 @@
   <data name="Settings_QuitHeader.Text" xml:space="preserve"><value>Encerrar</value></data>
   <data name="Settings_QuitDescription.Text" xml:space="preserve"><value>Fecha o aplicativo de verdade, inclusive o ícone da bandeja.</value></data>
   <data name="Settings_Quit.Content" xml:space="preserve"><value>Encerrar o OctoWatch</value></data>
+  <data name="Settings_TransparencyHeader.Text" xml:space="preserve"><value>Transparência</value></data>
+  <data name="Settings_AcrylicLabel.Text" xml:space="preserve"><value>Habilitar material acrílico</value></data>
+  <data name="Settings_AcrylicDesc.Text" xml:space="preserve"><value>Aplica uma textura translúcida (vidro) ao fundo da janela.</value></data>
+  <data name="Settings_OpacityLabel.Text" xml:space="preserve"><value>Opacidade de fundo</value></data>
 </root>

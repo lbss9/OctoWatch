@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Navigation;
 using uniffi.octowatch_core;
 using Windows.ApplicationModel.DataTransfer;
@@ -35,6 +36,10 @@ public sealed partial class SettingsPage : Page
         FillComboBoxes(settings);
         BuildEventChecks(settings, null);
         StartupSwitch.IsOn = settings.StartWithWindows;
+        AcrylicSwitch.IsOn = settings.AcrylicEnabled;
+        OpacitySlider.Value = settings.BackgroundOpacity;
+        SetOpacityPanelEnabled(settings.AcrylicEnabled);
+        OpacityValue.Text = $"{settings.BackgroundOpacity}%";
         _loading = false;
         await RefreshAccountUi();
         if (GitHubSession.IsSignedIn)
@@ -430,6 +435,34 @@ public sealed partial class SettingsPage : Page
         settings.StartWithWindows = StartupSwitch.IsOn;
         SettingsStore.Save(settings);
         StartupRegistry.SetEnabled(StartupSwitch.IsOn);
+    }
+
+    private void OnAcrylicToggled(object sender, RoutedEventArgs e)
+    {
+        if (_loading)
+            return;
+        var settings = SettingsStore.Load();
+        settings.AcrylicEnabled = AcrylicSwitch.IsOn;
+        SettingsStore.Save(settings);
+        SetOpacityPanelEnabled(AcrylicSwitch.IsOn);
+        App.Main?.ApplyBackdropSettings();
+    }
+
+    private void SetOpacityPanelEnabled(bool enabled)
+    {
+        OpacitySlider.IsEnabled = enabled;
+        OpacityPanel.Opacity = enabled ? 1.0 : 0.5;
+    }
+
+    private void OnOpacityChanged(object sender, RangeBaseValueChangedEventArgs e)
+    {
+        if (_loading)
+            return;
+        var settings = SettingsStore.Load();
+        settings.BackgroundOpacity = (int)e.NewValue;
+        SettingsStore.Save(settings);
+        OpacityValue.Text = $"{settings.BackgroundOpacity}%";
+        App.Main?.ApplyBackdropSettings();
     }
 
     private void OnQuit(object sender, RoutedEventArgs e) => App.Main?.ExitApplication();

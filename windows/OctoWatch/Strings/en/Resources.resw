@@ -109,4 +109,8 @@
   <data name="Settings_QuitHeader.Text" xml:space="preserve"><value>Quit</value></data>
   <data name="Settings_QuitDescription.Text" xml:space="preserve"><value>Fully closes the app, including the tray icon.</value></data>
   <data name="Settings_Quit.Content" xml:space="preserve"><value>Quit OctoWatch</value></data>
+  <data name="Settings_TransparencyHeader.Text" xml:space="preserve"><value>Transparency</value></data>
+  <data name="Settings_AcrylicLabel.Text" xml:space="preserve"><value>Enable acrylic material</value></data>
+  <data name="Settings_AcrylicDesc.Text" xml:space="preserve"><value>Applies a translucent (glass) texture to the window background.</value></data>
+  <data name="Settings_OpacityLabel.Text" xml:space="preserve"><value>Background opacity</value></data>
 </root>

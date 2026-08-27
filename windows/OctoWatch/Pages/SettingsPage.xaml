@@ -128,6 +128,52 @@
         />
       </Border>
 
+      <TextBlock x:Uid="Settings_TransparencyHeader" Style="{StaticResource SectionHeaderStyle}" />
+      <Border Style="{StaticResource SettingsCardStyle}">
+        <StackPanel Spacing="14">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Spacing="2">
+              <TextBlock x:Uid="Settings_AcrylicLabel" Style="{ThemeResource BodyTextBlockStyle}" />
+              <TextBlock
+                x:Uid="Settings_AcrylicDesc"
+                TextWrapping="Wrap"
+                Opacity="0.7"
+                Style="{ThemeResource CaptionTextBlockStyle}"
+              />
+            </StackPanel>
+            <ToggleSwitch x:Name="AcrylicSwitch" Grid.Column="1" Toggled="OnAcrylicToggled" />
+          </Grid>
+
+          <StackPanel x:Name="OpacityPanel" Spacing="6">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <TextBlock x:Uid="Settings_OpacityLabel" Style="{ThemeResource BodyTextBlockStyle}" />
+              <TextBlock
+                x:Name="OpacityValue"
+                Grid.Column="1"
+                Opacity="0.8"
+                Style="{ThemeResource BodyTextBlockStyle}"
+              />
+            </Grid>
+            <Slider
+              x:Name="OpacitySlider"
+              Minimum="10"
+              Maximum="100"
+              StepFrequency="5"
+              TickFrequency="10"
+              ValueChanged="OnOpacityChanged"
+            />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
       <TextBlock x:Uid="Settings_StartupHeader" Style="{StaticResource SectionHeaderStyle}" />
       <Border Style="{StaticResource SettingsCardStyle}">
         <Grid>
