@@ -437,7 +437,7 @@ public sealed partial class SettingsPage : Page
         StartupRegistry.SetEnabled(StartupSwitch.IsOn);
     }
 
-    // Toggle/slider só ajustam a UI; o fundo só muda ao clicar "Aplicar".
+    // Toggle/slider only update the form; the backdrop changes when Apply is clicked.
     private void OnAcrylicToggled(object sender, RoutedEventArgs e)
     {
         if (_loading)

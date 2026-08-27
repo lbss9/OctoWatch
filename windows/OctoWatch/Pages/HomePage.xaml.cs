@@ -10,7 +10,7 @@ public sealed partial class HomePage : Page
 {
     private bool _ready;
 
-    // Fonte estável da lista: atualizada in-place (diff), sem re-renderizar tudo.
+    // Stable list source: patched in-place so polling does not rebuild every card.
     private readonly ObservableCollection<FeedItem> _feed = [];
 
     public HomePage()

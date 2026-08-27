@@ -26,7 +26,7 @@ public sealed class AppSettings
     [JsonPropertyName("startWithWindows")]
     public bool StartWithWindows { get; set; }
 
-    // Aparência do fundo (estilo Windows Terminal): acrílico on/off + opacidade 0–100.
+    // Window backdrop (Windows Terminal style): acrylic on/off + 0–100 opacity.
     [JsonPropertyName("acrylicEnabled")]
     public bool AcrylicEnabled { get; set; } = true;
 

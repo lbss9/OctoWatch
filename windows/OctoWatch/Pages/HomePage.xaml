@@ -25,7 +25,7 @@
 
     <InfoBar x:Name="MessageBar" Grid.Row="1" IsOpen="False" IsClosable="True" />
 
-    <!-- Feed. Sem padding à direita: os cards encostam perto da scrollbar (overlay). -->
+    <!-- Feed. No right padding so cards sit next to the overlay scrollbar. -->
     <ListView
       x:Name="FeedList"
       Grid.Row="2"
@@ -107,7 +107,7 @@
       </ListView.ItemTemplate>
     </ListView>
 
-    <!-- Barra inferior: status à esquerda; filtro, atualizar e limpar à direita. -->
+    <!-- Footer: status on the left; filter, refresh, and clear on the right. -->
     <Grid Grid.Row="3" ColumnSpacing="8">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" />

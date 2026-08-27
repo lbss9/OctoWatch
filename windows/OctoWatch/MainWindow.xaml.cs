@@ -111,8 +111,7 @@ public sealed partial class MainWindow : Window
             ContentFrame.Navigate(page);
     }
 
-    // Faixa fechada = transparente (glass, homogêneo). Menu aberto = vidro fosco
-    // escuro que embaça o conteúdo atrás (legível, sem vazar).
+    // Collapsed rail stays clear. Open pane becomes a frosted sheet over the feed.
     private void OnPaneOpening(NavigationView sender, object args) => SetPaneGlass(true);
 
     private void OnPaneClosed(NavigationView sender, object args) => SetPaneGlass(false);
@@ -179,8 +178,7 @@ public sealed partial class MainWindow : Window
     }
 
     /// <summary>
-    /// Relê as preferências de transparência e reaplica ao vivo (chamado pela
-    /// tela de Configurações quando o usuário mexe no slider/toggle).
+    /// Reloads acrylic/opacity from settings (Settings Apply button).
     /// </summary>
     public void ApplyBackdropSettings()
     {
@@ -190,7 +188,7 @@ public sealed partial class MainWindow : Window
         ApplyGlassColors();
     }
 
-    /// <summary>Pré-visualiza valores sem salvar (usado ao arrastar o slider/toggle).</summary>
+    /// <summary>Preview values without saving (kept for live tweaking).</summary>
     public void PreviewBackdrop(bool acrylic, int opacity)
     {
         _acrylicOn = acrylic;
@@ -221,13 +219,12 @@ public sealed partial class MainWindow : Window
             ? Color.FromArgb(255, 24, 24, 28)
             : Color.FromArgb(255, 243, 243, 243);
 
-        // O acrylic controller fica com um vidro fosco fixo (bonito). A opacidade
-        // que o usuário controla é aplicada como uma CAMADA de alpha por cima —
-        // brush XAML é confiável, ao contrário do TintOpacity do controller.
+        // Keep the acrylic controller as a light blur. User opacity is a XAML
+        // alpha layer on top — TintOpacity on the controller is not reliable.
         if (_glass is not null)
         {
-            // Vidro limpo (blur quase sem fosco), estilo acrylic do Windows Terminal.
-            // A opacidade real vem da camada de alpha por cima, para bater com o Terminal.
+            // Near-clear blur, Windows Terminal acrylic style. Real opacity
+            // comes from the overlay so it tracks the slider.
             _glass.TintColor = baseColor;
             _glass.FallbackColor = dark
                 ? Color.FromArgb(255, 42, 42, 46)
@@ -236,8 +233,8 @@ public sealed partial class MainWindow : Window
             _glass.LuminosityOpacity = 0.10f;
         }
 
-        // Camada de opacidade sobre o vidro (0–100%). Acrílico OFF (ou 100%) = opaco;
-        // opacidade baixa = bem translúcido, vendo o desktop borrado através (como o Terminal).
+        // Opacity overlay (0–100%). Acrylic off (or 100%) is opaque; low values
+        // let the blurred desktop show through, Terminal-style.
         var alpha = _acrylicOn && _glass is not null
             ? (byte)Math.Clamp(_opacityPct * 255 / 100, 0, 255)
             : (byte)255;
