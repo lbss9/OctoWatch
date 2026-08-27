@@ -217,6 +217,45 @@
         </Grid>
       </Border>
 
+      <TextBlock x:Uid="Settings_UpdatesHeader" Style="{StaticResource SectionHeaderStyle}" />
+      <Border Style="{StaticResource SettingsCardStyle}">
+        <StackPanel Spacing="10">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+              x:Uid="Settings_AutoUpdate"
+              Grid.Column="0"
+              TextWrapping="Wrap"
+              VerticalAlignment="Center"
+              Style="{ThemeResource BodyTextBlockStyle}"
+            />
+            <ToggleSwitch
+              x:Name="AutoUpdateSwitch"
+              Grid.Column="1"
+              HorizontalAlignment="Right"
+              MinWidth="0"
+              OnContent=""
+              OffContent=""
+              Toggled="OnAutoUpdateToggled"
+            />
+          </Grid>
+          <Button
+            x:Name="CheckUpdatesButton"
+            x:Uid="Settings_CheckUpdates"
+            Click="OnCheckUpdates"
+          />
+          <TextBlock
+            x:Name="UpdateStatusText"
+            TextWrapping="Wrap"
+            Opacity="0.75"
+            Style="{ThemeResource CaptionTextBlockStyle}"
+          />
+        </StackPanel>
+      </Border>
+
       <TextBlock x:Uid="Settings_QuitHeader" Style="{StaticResource SectionHeaderStyle}" />
       <Border Style="{StaticResource SettingsCardStyle}">
         <StackPanel Spacing="8">

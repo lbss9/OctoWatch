@@ -35,6 +35,7 @@ public sealed partial class SettingsPage : Page
         FillComboBoxes(settings);
         BuildEventChecks(settings, null);
         StartupSwitch.IsOn = settings.StartWithWindows;
+        AutoUpdateSwitch.IsOn = settings.AutoUpdate;
         AcrylicSwitch.IsOn = settings.AcrylicEnabled;
         OpacitySlider.Value = settings.BackgroundOpacity;
         SetOpacityPanelEnabled(settings.AcrylicEnabled);
@@ -434,6 +435,31 @@ public sealed partial class SettingsPage : Page
         settings.StartWithWindows = StartupSwitch.IsOn;
         SettingsStore.Save(settings);
         StartupRegistry.SetEnabled(StartupSwitch.IsOn);
+    }
+
+    private void OnAutoUpdateToggled(object sender, RoutedEventArgs e)
+    {
+        if (_loading)
+            return;
+        var settings = SettingsStore.Load();
+        settings.AutoUpdate = AutoUpdateSwitch.IsOn;
+        SettingsStore.Save(settings);
+    }
+
+    private async void OnCheckUpdates(object sender, RoutedEventArgs e)
+    {
+        CheckUpdatesButton.IsEnabled = false;
+        UpdateStatusText.Text = Loc.Get("Settings_Updating");
+        try
+        {
+            var applied = await UpdateService.CheckAndApplyAsync();
+            if (!applied)
+                UpdateStatusText.Text = Loc.Get("Settings_UpToDate");
+        }
+        finally
+        {
+            CheckUpdatesButton.IsEnabled = true;
+        }
     }
 
     // Toggle/slider only update the form; the backdrop changes when Apply is clicked.

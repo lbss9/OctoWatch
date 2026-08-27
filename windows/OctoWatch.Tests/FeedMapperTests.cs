@@ -150,6 +150,7 @@ public class AppSettingsTests
         Assert.Equal(60, settings.PollingSeconds);
         Assert.Equal("pt-BR", settings.Language);
         Assert.Equal("System", settings.Theme);
+        Assert.False(settings.AutoUpdate);
     }
 }
 

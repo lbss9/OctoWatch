@@ -32,6 +32,9 @@ public sealed class AppSettings
 
     [JsonPropertyName("backgroundOpacity")]
     public int BackgroundOpacity { get; set; } = 30;
+
+    [JsonPropertyName("autoUpdate")]
+    public bool AutoUpdate { get; set; }
 }
 
 public static class MonitorEvents

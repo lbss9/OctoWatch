@@ -115,4 +115,10 @@
   <data name="Settings_OpacityLabel.Text" xml:space="preserve"><value>Background opacity</value></data>
   <data name="Settings_Apply.Content" xml:space="preserve"><value>Apply</value></data>
   <data name="Settings_ResetDefault.Content" xml:space="preserve"><value>Restore default</value></data>
+
+  <data name="Settings_UpdatesHeader.Text" xml:space="preserve"><value>Updates</value></data>
+  <data name="Settings_CheckUpdates.Content" xml:space="preserve"><value>Check for updates</value></data>
+  <data name="Settings_AutoUpdate.Text" xml:space="preserve"><value>Update automatically on launch</value></data>
+  <data name="Settings_UpToDate" xml:space="preserve"><value>You're on the latest version.</value></data>
+  <data name="Settings_Updating" xml:space="preserve"><value>Downloading update…</value></data>
 </root>

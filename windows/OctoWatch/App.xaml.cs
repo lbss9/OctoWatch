@@ -10,6 +10,7 @@ public partial class App : Application
 
     public App()
     {
+        Velopack.VelopackApp.Build().Run(); // must be first — handles install/update hooks
         this.UnhandledException += (_, e) =>
         {
             var path = Path.Combine(
@@ -31,6 +32,8 @@ public partial class App : Application
         Main = new MainWindow();
         Main.ApplyTheme(settings.Theme);
         Main.Activate();
+        if (settings.AutoUpdate)
+            _ = UpdateService.CheckAndApplyAsync();
     }
 
     public static void ApplyCulture(string language)
