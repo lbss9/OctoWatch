@@ -1,19 +1,51 @@
+using System.Globalization;
 using Microsoft.UI.Xaml;
+using Windows.ApplicationModel.Resources.Core;
 
 namespace OctoWatch;
 
 public partial class App : Application
 {
-    private Window? _window;
+    public static MainWindow? Main { get; private set; }
 
     public App()
     {
+        this.UnhandledException += (_, e) =>
+        {
+            var path = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "OctoWatch",
+                "crash.log"
+            );
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            File.WriteAllText(path, $"{e.Message}\n{e.Exception}");
+        };
         this.InitializeComponent();
     }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        _window = new MainWindow();
-        _window.Activate();
+        var settings = SettingsStore.Load();
+        ApplyCulture(settings.Language);
+        UpdateToast.Register();
+        Main = new MainWindow();
+        Main.ApplyTheme(settings.Theme);
+        Main.Activate();
+    }
+
+    public static void ApplyCulture(string language)
+    {
+        try
+        {
+            var culture = new CultureInfo(language);
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+            ResourceContext.SetGlobalQualifierValue("Language", language);
+        }
+        catch
+        {
+        }
     }
 }

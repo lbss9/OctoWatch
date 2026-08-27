@@ -1,5 +1,3 @@
-//! Erros do núcleo, exportados ao UniFFI como um enum simples.
-
 #[derive(Debug, thiserror::Error, uniffi::Error)]
 pub enum OctoError {
     #[error("falha de autenticação: {msg}")]
@@ -14,7 +12,6 @@ pub enum OctoError {
 
 impl From<octocrab::Error> for OctoError {
     fn from(e: octocrab::Error) -> Self {
-        // Tenta distinguir 401/404 do resto para dar uma mensagem melhor à UI.
         if let octocrab::Error::GitHub { source, .. } = &e {
             let status = source.status_code.as_u16();
             let msg = source.message.clone();

@@ -9,7 +9,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <!-- Reusa exatamente o mesmo binding gerado do app WinUI -->
   <ItemGroup>
     <Compile Include="..\OctoWatch\Interop\octowatch_core.cs" />
   </ItemGroup>

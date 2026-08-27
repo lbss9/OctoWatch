@@ -1,20 +1,8 @@
-//! Cliente do GitHub exposto às UIs como um objeto UniFFI.
-//!
-//! v1: métodos síncronos que bloqueiam em um runtime tokio compartilhado.
-//! As UIs devem chamá-los fora da thread de interface (Task.Run no C#, uma
-//! fila de background no Swift, um worker no GTK). Isso mantém a fronteira FFI
-//! simples e idêntica entre as linguagens; async cross-FFI fica para depois.
-
 use crate::error::OctoError;
 use crate::models::{Branch, Commit, PullRequest, Repo, WorkflowRun};
-use once_cell::sync::Lazy;
+use crate::runtime::RT;
 use serde::Deserialize;
 use std::sync::Arc;
-use tokio::runtime::Runtime;
-
-static RT: Lazy<Runtime> = Lazy::new(|| {
-    Runtime::new().expect("não foi possível iniciar o runtime tokio do OctoWatch")
-});
 
 #[derive(uniffi::Object)]
 pub struct Client {
@@ -23,16 +11,12 @@ pub struct Client {
 
 #[uniffi::export]
 impl Client {
-    /// Cria um cliente autenticado por Personal Access Token.
-    /// Um token vazio cria um cliente anônimo (só dados públicos, rate limit baixo).
     #[uniffi::constructor]
     pub fn new(token: String) -> Result<Arc<Self>, OctoError> {
         let mut builder = octocrab::Octocrab::builder();
         if !token.trim().is_empty() {
             builder = builder.personal_token(token);
         }
-        // Constrói dentro do contexto do runtime: o cliente do octocrab (tower/hyper)
-        // spawna workers internos que exigem um reactor tokio ativo.
         let _guard = RT.enter();
         let inner = builder
             .build()
@@ -40,7 +24,6 @@ impl Client {
         Ok(Arc::new(Self { inner }))
     }
 
-    /// Valida o token retornando o login do usuário autenticado.
     pub fn whoami(&self) -> Result<String, OctoError> {
         let me: User = self.get("/user")?;
         Ok(me.login)
@@ -78,10 +61,44 @@ impl Client {
         let dtos: Vec<CommitDto> = self.get(&route)?;
         Ok(dtos.into_iter().map(Into::into).collect())
     }
+
+    pub fn list_repositories(&self) -> Result<Vec<Repo>, OctoError> {
+        let mut all = Vec::new();
+        for page in 1..=3u32 {
+            let route = format!("/user/repos?per_page=100&sort=updated&page={page}");
+            let dtos: Vec<RepoDto> = self.get(&route)?;
+            let count = dtos.len();
+            all.extend(dtos.into_iter().map(Into::into));
+            if count < 100 {
+                break;
+            }
+        }
+        Ok(all)
+    }
+
+    pub fn rerun_workflow(&self, repo: Repo, run_id: i64) -> Result<(), OctoError> {
+        self.post_empty(&format!(
+            "/repos/{}/{}/actions/runs/{run_id}/rerun",
+            repo.owner, repo.name
+        ))
+    }
+
+    pub fn rerun_failed_jobs(&self, repo: Repo, run_id: i64) -> Result<(), OctoError> {
+        self.post_empty(&format!(
+            "/repos/{}/{}/actions/runs/{run_id}/rerun-failed-jobs",
+            repo.owner, repo.name
+        ))
+    }
+
+    pub fn cancel_workflow(&self, repo: Repo, run_id: i64) -> Result<(), OctoError> {
+        self.post_empty(&format!(
+            "/repos/{}/{}/actions/runs/{run_id}/cancel",
+            repo.owner, repo.name
+        ))
+    }
 }
 
 impl Client {
-    /// GET tipado num endpoint REST, bloqueando no runtime compartilhado.
     fn get<R: serde::de::DeserializeOwned>(&self, route: &str) -> Result<R, OctoError> {
         let client = self.inner.clone();
         let route = route.to_string();
@@ -92,12 +109,30 @@ impl Client {
                 .map_err(OctoError::from)
         })
     }
-}
 
-// ---------------------------------------------------------------------------
-// DTOs internos: mapeiam o JSON do GitHub e são convertidos para os modelos
-// públicos. Ficam privados para desacoplar a FFI da forma exata da API.
-// ---------------------------------------------------------------------------
+    fn post_empty(&self, route: &str) -> Result<(), OctoError> {
+        let client = self.inner.clone();
+        let route = route.to_string();
+        RT.block_on(async move {
+            let uri = http::Uri::builder()
+                .path_and_query(&route)
+                .build()
+                .map_err(|e| OctoError::Api { msg: e.to_string() })?;
+            let response = client
+                ._post(uri, None::<&()>)
+                .await
+                .map_err(OctoError::from)?;
+            let status = response.status();
+            if status.is_success() {
+                Ok(())
+            } else {
+                Err(OctoError::Api {
+                    msg: format!("{status}"),
+                })
+            }
+        })
+    }
+}
 
 #[derive(Deserialize)]
 struct User {
@@ -164,6 +199,8 @@ struct PullDto {
     base: GitRef,
     updated_at: String,
     html_url: String,
+    #[serde(default)]
+    merged_at: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -185,6 +222,7 @@ impl From<PullDto> for PullRequest {
             author: d.user.map(|u| u.login).unwrap_or_default(),
             state: d.state,
             draft: d.draft,
+            merged: d.merged_at.is_some(),
             head_branch: d.head.ref_name,
             base_branch: d.base.ref_name,
             updated_at: d.updated_at,
@@ -249,9 +287,28 @@ impl From<CommitDto> for Commit {
         Commit {
             sha: d.sha,
             message: first_line(&d.commit.message),
-            author: d.author.map(|u| u.login).filter(|s| !s.is_empty()).unwrap_or(author_name),
+            author: d
+                .author
+                .map(|u| u.login)
+                .filter(|s| !s.is_empty())
+                .unwrap_or(author_name),
             date,
             html_url: d.html_url,
+        }
+    }
+}
+
+#[derive(Deserialize)]
+struct RepoDto {
+    name: String,
+    owner: Login,
+}
+
+impl From<RepoDto> for Repo {
+    fn from(d: RepoDto) -> Self {
+        Repo {
+            owner: d.owner.login,
+            name: d.name,
         }
     }
 }

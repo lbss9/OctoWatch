@@ -1,9 +1,4 @@
-//! Testes de integração contra a API pública do GitHub.
-//!
-//! Rodam anonimamente por padrão (sujeitos ao rate limit baixo do GitHub).
-//! Defina GITHUB_TOKEN para autenticar e habilitar o teste `whoami`.
-
-use octowatch_core::{Client, Repo};
+use octowatch_core::{start_device_login, Client, Repo};
 
 fn client() -> std::sync::Arc<Client> {
     let token = std::env::var("GITHUB_TOKEN").unwrap_or_default();
@@ -34,7 +29,6 @@ fn lista_branches_e_commits_de_repo_publico() {
 #[test]
 fn lista_pull_requests() {
     let c = client();
-    // Repo grande e ativo: sempre tem PRs (abertos ou fechados).
     let prs = c
         .list_pull_requests(repo("cli", "cli"))
         .expect("pull requests");
@@ -56,10 +50,41 @@ fn lista_workflow_runs() {
 
 #[test]
 fn whoami_quando_autenticado() {
-    if std::env::var("GITHUB_TOKEN").unwrap_or_default().trim().is_empty() {
+    if std::env::var("GITHUB_TOKEN")
+        .unwrap_or_default()
+        .trim()
+        .is_empty()
+    {
         eprintln!("pulando: GITHUB_TOKEN não definido");
         return;
     }
     let login = client().whoami().expect("whoami");
     assert!(!login.is_empty());
+}
+
+#[test]
+fn lista_repositorios_quando_autenticado() {
+    if std::env::var("GITHUB_TOKEN")
+        .unwrap_or_default()
+        .trim()
+        .is_empty()
+    {
+        eprintln!("pulando: GITHUB_TOKEN não definido");
+        return;
+    }
+    let repos = client().list_repositories().expect("repos");
+    assert!(!repos.is_empty(), "esperava ao menos um repositório");
+    assert!(repos
+        .iter()
+        .all(|r| !r.owner.is_empty() && !r.name.is_empty()));
+}
+
+#[test]
+fn start_device_login_retorna_codigo() {
+    let code = start_device_login("repo".into()).expect("device code");
+    assert!(!code.user_code.is_empty());
+    assert!(!code.device_code.is_empty());
+    assert!(code.verification_uri.contains("github.com"));
+    assert!(code.interval >= 1);
+    assert!(code.expires_in > 0);
 }

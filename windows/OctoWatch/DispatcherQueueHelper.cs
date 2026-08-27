@@ -2,11 +2,6 @@ using System.Runtime.InteropServices;
 
 namespace OctoWatch;
 
-/// <summary>
-/// Garante um DispatcherQueueController no thread da UI — pré-requisito dos
-/// controllers de backdrop (Acrylic/Mica) do Windows App SDK. Em apps WinUI o
-/// thread principal já tem uma DispatcherQueue, então normalmente é no-op.
-/// </summary>
 internal sealed class DispatcherQueueHelper
 {
     [StructLayout(LayoutKind.Sequential)]
@@ -34,8 +29,8 @@ internal sealed class DispatcherQueueHelper
 
         DispatcherQueueOptions options;
         options.dwSize = Marshal.SizeOf<DispatcherQueueOptions>();
-        options.threadType = 2; // DQTYPE_THREAD_CURRENT
-        options.apartmentType = 2; // DQTAT_COM_STA
+        options.threadType = 2;
+        options.apartmentType = 2;
 
         object? controller = null;
         CreateDispatcherQueueController(options, ref controller);

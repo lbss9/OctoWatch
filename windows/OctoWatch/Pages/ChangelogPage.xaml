@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+  x:Class="OctoWatch.Pages.ChangelogPage"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+>
+  <ScrollViewer Padding="12,8,12,16">
+    <TextBlock
+      x:Name="ChangelogText"
+      TextWrapping="Wrap"
+      IsTextSelectionEnabled="True"
+      Style="{ThemeResource BodyTextBlockStyle}"
+    />
+  </ScrollViewer>
+</Page>

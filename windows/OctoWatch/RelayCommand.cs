@@ -3,7 +3,6 @@ using System.Windows.Input;
 
 namespace OctoWatch;
 
-/// <summary>ICommand mínimo para ligar ações (ex.: clique no ícone da bandeja).</summary>
 public sealed class RelayCommand : ICommand
 {
     private readonly Action _execute;

@@ -8,17 +8,16 @@
     <Platforms>x64</Platforms>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <UseWinUI>true</UseWinUI>
-    <!-- App desempacotado (unpackaged): roda como .exe comum -->
     <WindowsPackageType>None</WindowsPackageType>
-    <!-- Empacota o Windows App Runtime (e o .NET) junto do .exe: roda sem instalar
-         o runtime na máquina. Custa um output maior. -->
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <SelfContained>true</SelfContained>
     <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
-    <!-- Os bindings gerados pelo UniFFI usam blocos unsafe -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <EnableMsixTooling>true</EnableMsixTooling>
+    <DefaultLanguage>pt-BR</DefaultLanguage>
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,10 +26,13 @@
     <PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
   </ItemGroup>
 
-  <!-- Núcleo Rust nativo, copiado ao lado do .exe para o P/Invoke encontrá-lo -->
   <ItemGroup>
     <None Update="octowatch_core.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\CHANGELOG.md" Link="CHANGELOG.md" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

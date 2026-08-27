@@ -1,8 +1,3 @@
-//! Modelos de dados expostos às UIs nativas via UniFFI.
-//!
-//! Mantemos `status`/`conclusion`/`state` como `String` de propósito: a API do
-//! GitHub evolui esses valores com frequência e strings evitam quebras de FFI.
-
 #[derive(Debug, Clone, uniffi::Record)]
 pub struct Repo {
     pub owner: String,
@@ -13,9 +8,7 @@ pub struct Repo {
 pub struct WorkflowRun {
     pub id: i64,
     pub name: String,
-    /// queued | in_progress | completed
     pub status: String,
-    /// success | failure | cancelled | ... (nulo enquanto não concluído)
     pub conclusion: Option<String>,
     pub branch: String,
     pub event: String,
@@ -29,9 +22,9 @@ pub struct PullRequest {
     pub number: i64,
     pub title: String,
     pub author: String,
-    /// open | closed
     pub state: String,
     pub draft: bool,
+    pub merged: bool,
     pub head_branch: String,
     pub base_branch: String,
     pub updated_at: String,
@@ -52,4 +45,22 @@ pub struct Commit {
     pub author: String,
     pub date: String,
     pub html_url: String,
+}
+
+#[derive(Debug, Clone, uniffi::Record)]
+pub struct DeviceCode {
+    pub user_code: String,
+    pub verification_uri: String,
+    pub device_code: String,
+    pub interval: u32,
+    pub expires_in: u32,
+}
+
+#[derive(Debug, Clone, uniffi::Enum)]
+pub enum DeviceLoginStatus {
+    Pending,
+    SlowDown,
+    Expired,
+    Denied,
+    Authorized { token: String },
 }

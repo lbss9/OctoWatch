@@ -5,10 +5,6 @@ using Windows.UI;
 
 namespace OctoWatch.Controls;
 
-/// <summary>
-/// Bolinha de status: verde (passou), vermelho (erro), amarelo pulsante
-/// (em execução), cinza (desconhecido/outro).
-/// </summary>
 public sealed partial class StatusDot : UserControl
 {
     public StatusDot()
@@ -23,7 +19,6 @@ public sealed partial class StatusDot : UserControl
         new PropertyMetadata("other", OnStateChanged)
     );
 
-    /// <summary>success | failure | running | other</summary>
     public string State
     {
         get => (string)GetValue(StateProperty);
@@ -41,10 +36,10 @@ public sealed partial class StatusDot : UserControl
 
         Color color = state switch
         {
-            "success" => Color.FromArgb(0xFF, 0x2E, 0xA0, 0x43), // verde
-            "failure" => Color.FromArgb(0xFF, 0xD6, 0x3B, 0x3B), // vermelho
-            "running" => Color.FromArgb(0xFF, 0xE3, 0xB3, 0x41), // amarelo
-            _ => Color.FromArgb(0xFF, 0x9A, 0x9A, 0x9A), // cinza
+            "success" => Color.FromArgb(0xFF, 0x2E, 0xA0, 0x43),
+            "failure" => Color.FromArgb(0xFF, 0xD6, 0x3B, 0x3B),
+            "running" => Color.FromArgb(0xFF, 0xE3, 0xB3, 0x41),
+            _ => Color.FromArgb(0xFF, 0x9A, 0x9A, 0x9A),
         };
 
         var brush = new SolidColorBrush(color);
