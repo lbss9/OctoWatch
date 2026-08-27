@@ -19,6 +19,8 @@
     <Compile Include="..\OctoWatch\Logic\FeedMapper.cs" Link="FeedMapper.cs" />
     <Compile Include="..\OctoWatch\Logic\CardActions.cs" Link="CardActions.cs" />
     <Compile Include="..\OctoWatch\Logic\FeedDiff.cs" Link="FeedDiff.cs" />
+    <Compile Include="..\OctoWatch\Logic\RelativeTime.cs" Link="RelativeTime.cs" />
+    <Compile Include="..\OctoWatch\Logic\MarkdownLite.cs" Link="MarkdownLite.cs" />
     <Compile Include="..\OctoWatch\Models\AppSettings.cs" Link="AppSettings.cs" />
   </ItemGroup>
 </Project>

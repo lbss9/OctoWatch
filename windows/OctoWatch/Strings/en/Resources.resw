@@ -121,4 +121,11 @@
   <data name="Settings_AutoUpdate.Text" xml:space="preserve"><value>Update automatically on launch</value></data>
   <data name="Settings_UpToDate" xml:space="preserve"><value>You're on the latest version.</value></data>
   <data name="Settings_Updating" xml:space="preserve"><value>Downloading update…</value></data>
+
+  <data name="Time_JustNow" xml:space="preserve"><value>just now</value></data>
+  <data name="Time_MinutesAgo" xml:space="preserve"><value>{0}m ago</value></data>
+  <data name="Time_HoursAgo" xml:space="preserve"><value>{0}h ago</value></data>
+  <data name="Time_Yesterday" xml:space="preserve"><value>yesterday</value></data>
+  <data name="Time_DaysAgo" xml:space="preserve"><value>{0}d ago</value></data>
+  <data name="Time_OnDate" xml:space="preserve"><value>{0}</value></data>
 </root>

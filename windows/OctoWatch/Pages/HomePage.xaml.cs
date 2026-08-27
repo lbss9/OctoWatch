@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using uniffi.octowatch_core;
 
 namespace OctoWatch.Pages;
@@ -117,6 +118,18 @@ public sealed partial class HomePage : Page
     {
         if (e.ClickedItem is FeedItem card)
             await SafeUrl.OpenAsync(card.Url);
+    }
+
+    private void OnCardPointerEntered(object sender, PointerRoutedEventArgs e) =>
+        SetOverflowOpacity(sender, 1);
+
+    private void OnCardPointerExited(object sender, PointerRoutedEventArgs e) =>
+        SetOverflowOpacity(sender, 0);
+
+    private static void SetOverflowOpacity(object sender, double opacity)
+    {
+        if (sender is FrameworkElement root && root.FindName("OverflowButton") is UIElement button)
+            button.Opacity = opacity;
     }
 
     private void OnCardMenuClick(object sender, RoutedEventArgs e)

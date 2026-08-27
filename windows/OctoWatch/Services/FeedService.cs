@@ -53,15 +53,17 @@ internal static class FeedService
         {
             var title = string.IsNullOrEmpty(run.name) ? run.commitMessage : run.name;
             var detail = run.conclusion ?? run.status;
+            var when = ParseTime(run.updatedAt);
             yield return new FeedItem(
                 FeedMapper.KindAction,
                 "\uE9F5",
                 title,
-                $"{full} · {run.branch} · {detail}",
+                Stamp(when, $"{full} · {run.branch} · {detail}"),
                 FeedMapper.MapRunState(run.status, run.conclusion),
                 run.htmlUrl,
                 full,
-                run.id
+                run.id,
+                UpdatedAt: when
             );
         }
     }
@@ -71,15 +73,20 @@ internal static class FeedService
         foreach (var pr in pulls)
         {
             var state = pr.merged ? "merged" : pr.state;
+            var when = ParseTime(pr.updatedAt);
             yield return new FeedItem(
                 FeedMapper.KindPull,
                 "\uE8A1",
                 $"#{pr.number} {pr.title}",
-                $"{full} · {pr.author} · {state} · {pr.headBranch} → {pr.baseBranch}",
+                Stamp(
+                    when,
+                    $"{full} · {pr.author} · {state} · {pr.headBranch} → {pr.baseBranch}"
+                ),
                 FeedMapper.MapPullState(pr.state, pr.draft, pr.merged),
                 pr.htmlUrl,
                 full,
-                PullNumber: pr.number
+                PullNumber: pr.number,
+                UpdatedAt: when
             );
         }
     }
@@ -104,6 +111,24 @@ internal static class FeedService
                 BranchName: branch.name
             );
         }
+    }
+
+    private static DateTimeOffset? ParseTime(string? iso) =>
+        DateTimeOffset.TryParse(iso, out var when) ? when : null;
+
+    private static string Stamp(DateTimeOffset? when, string rest)
+    {
+        if (when is null)
+            return rest;
+        var parts = RelativeTime.Describe(when.Value, DateTimeOffset.UtcNow);
+        string label;
+        if (parts.Date is not null)
+            label = string.Format(Loc.Get(parts.Key), parts.Date);
+        else if (parts.Count is int count)
+            label = string.Format(Loc.Get(parts.Key), count);
+        else
+            label = Loc.Get(parts.Key);
+        return $"{label} · {rest}";
     }
 }
 

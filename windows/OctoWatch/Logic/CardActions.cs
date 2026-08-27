@@ -10,7 +10,8 @@ public sealed record FeedItem(
     string RepoFullName = "",
     long RunId = 0,
     long PullNumber = 0,
-    string BranchName = ""
+    string BranchName = "",
+    DateTimeOffset? UpdatedAt = null
 );
 
 public sealed record CardAction(string Id, string LabelKey);

@@ -46,61 +46,76 @@
         <DataTemplate x:DataType="local:FeedItem">
           <Border
             CornerRadius="8"
-            Padding="12,9"
+            Padding="0"
             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
             BorderThickness="1"
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            PointerEntered="OnCardPointerEntered"
+            PointerExited="OnCardPointerExited"
           >
-            <Grid ColumnSpacing="12">
+            <Grid>
               <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="3" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
               </Grid.ColumnDefinitions>
-              <ctrl:StatusDot
+              <Rectangle
                 Grid.Column="0"
-                State="{x:Bind State}"
-                VerticalAlignment="Center"
+                RadiusX="1.5"
+                RadiusY="1.5"
+                Fill="{x:Bind local:CardAccent.For(State)}"
               />
-              <StackPanel Grid.Column="1" Spacing="1">
-                <Grid ColumnSpacing="6">
-                  <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                  </Grid.ColumnDefinitions>
-                  <FontIcon
-                    Grid.Column="0"
-                    Glyph="{x:Bind KindGlyph}"
-                    FontSize="12"
-                    Opacity="0.55"
-                    VerticalAlignment="Center"
-                  />
-                  <TextBlock
-                    Grid.Column="1"
-                    Text="{x:Bind Title}"
-                    TextTrimming="CharacterEllipsis"
-                    Style="{ThemeResource BodyStrongTextBlockStyle}"
-                  />
-                </Grid>
-                <TextBlock
-                  Text="{x:Bind Subtitle}"
-                  Opacity="0.65"
-                  TextTrimming="CharacterEllipsis"
-                  Style="{ThemeResource CaptionTextBlockStyle}"
+              <Grid Grid.Column="1" Padding="12,9" ColumnSpacing="12">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ctrl:StatusDot
+                  Grid.Column="0"
+                  State="{x:Bind State}"
+                  VerticalAlignment="Center"
                 />
-              </StackPanel>
-              <Button
-                Grid.Column="2"
-                Tag="{x:Bind}"
-                Click="OnCardMenuClick"
-                Padding="6,4"
-                VerticalAlignment="Center"
-                Background="Transparent"
-                BorderThickness="0"
-                Opacity="0.6"
-              >
-                <FontIcon Glyph="&#xE712;" FontSize="16" />
-              </Button>
+                <StackPanel Grid.Column="1" Spacing="1">
+                  <Grid ColumnSpacing="6">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="Auto" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon
+                      Grid.Column="0"
+                      Glyph="{x:Bind KindGlyph}"
+                      FontSize="12"
+                      Opacity="0.55"
+                      VerticalAlignment="Center"
+                    />
+                    <TextBlock
+                      Grid.Column="1"
+                      Text="{x:Bind Title}"
+                      TextTrimming="CharacterEllipsis"
+                      Style="{ThemeResource BodyStrongTextBlockStyle}"
+                    />
+                  </Grid>
+                  <TextBlock
+                    Text="{x:Bind Subtitle}"
+                    Opacity="0.65"
+                    TextTrimming="CharacterEllipsis"
+                    Style="{ThemeResource CaptionTextBlockStyle}"
+                  />
+                </StackPanel>
+                <Button
+                  x:Name="OverflowButton"
+                  Grid.Column="2"
+                  Tag="{x:Bind}"
+                  Click="OnCardMenuClick"
+                  Padding="6,4"
+                  VerticalAlignment="Center"
+                  Background="Transparent"
+                  BorderThickness="0"
+                  Opacity="0"
+                >
+                  <FontIcon Glyph="&#xE712;" FontSize="16" />
+                </Button>
+              </Grid>
             </Grid>
           </Border>
         </DataTemplate>

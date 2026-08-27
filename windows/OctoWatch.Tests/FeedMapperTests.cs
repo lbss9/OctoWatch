@@ -189,3 +189,45 @@ public class FeedDiffTests
             _ => new FeedItem(kind, "", title, "", "success", "", "o/r", id),
         };
 }
+
+public class RelativeTimeTests
+{
+    [Fact]
+    public void Describe_uses_minutes_hours_yesterday_and_date()
+    {
+        var now = new DateTimeOffset(2026, 8, 27, 15, 0, 0, TimeSpan.Zero);
+
+        Assert.Equal("Time_JustNow", RelativeTime.Describe(now.AddSeconds(-10), now).Key);
+        Assert.Equal(5, RelativeTime.Describe(now.AddMinutes(-5), now).Count);
+        Assert.Equal("Time_HoursAgo", RelativeTime.Describe(now.AddHours(-3), now).Key);
+        Assert.Equal("Time_Yesterday", RelativeTime.Describe(now.AddDays(-1), now).Key);
+        Assert.Equal("2026-08-01", RelativeTime.Describe(now.AddDays(-26), now).Date);
+    }
+}
+
+public class MarkdownLiteTests
+{
+    [Fact]
+    public void Parse_headings_bullets_bold_and_links()
+    {
+        var blocks = MarkdownLite.Parse(
+            """
+            # Title
+            ## Section
+            A **bold** [link](https://example.com) here.
+            - one
+            - two
+            """
+        );
+
+        Assert.Equal(4, blocks.Count);
+        Assert.IsType<MdHeading>(blocks[0]);
+        Assert.Equal(1, ((MdHeading)blocks[0]).Level);
+        Assert.IsType<MdHeading>(blocks[1]);
+        var paragraph = Assert.IsType<MdParagraph>(blocks[2]);
+        Assert.Contains(paragraph.Spans, s => s is MdBold);
+        Assert.Contains(paragraph.Spans, s => s is MdLink link && link.Url.StartsWith("https://"));
+        var list = Assert.IsType<MdList>(blocks[3]);
+        Assert.Equal(2, list.Items.Count);
+    }
+}
