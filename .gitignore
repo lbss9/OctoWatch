@@ -1,0 +1,28 @@
+# Rust
+/core/target/
+**/*.rs.bk
+
+# Generated bindings (regenerated via scripts/gen-bindings).
+# Windows: regenerated on the dev machine. macOS: committed so a fresh clone
+# opens in Xcode without the Rust toolchain (still needs the static lib).
+/windows/OctoWatch/Interop/
+/windows/OctoWatch/octowatch_core.dll
+
+# .NET
+[Bb]in/
+[Oo]bj/
+*.user
+
+# macOS / Xcode
+.DS_Store
+/macos/.build/
+/macos/lib/
+/macos/*.xcodeproj/xcuserdata/
+
+# Linux / meson
+/linux/target/
+/linux/builddir/
+
+# Secrets
+*.token
+.env

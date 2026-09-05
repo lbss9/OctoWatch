@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="Nav_Home.Content" xml:space="preserve"><value>Home</value></data>
+  <data name="Nav_About.Content" xml:space="preserve"><value>About</value></data>
+  <data name="Nav_Changelog.Content" xml:space="preserve"><value>Changelog</value></data>
+
+  <data name="Tray_Open" xml:space="preserve"><value>Open</value></data>
+  <data name="Tray_Exit" xml:space="preserve"><value>Quit</value></data>
+
+  <data name="Home_FilterAll.Text" xml:space="preserve"><value>All</value></data>
+  <data name="Home_FilterActions.Text" xml:space="preserve"><value>Actions</value></data>
+  <data name="Home_FilterPrs.Text" xml:space="preserve"><value>PRs</value></data>
+  <data name="Home_FilterBranches.Text" xml:space="preserve"><value>Branches</value></data>
+  <data name="Home_Filter" xml:space="preserve"><value>Filter</value></data>
+  <data name="Home_Owner.PlaceholderText" xml:space="preserve"><value>owner</value></data>
+  <data name="Home_Repo.PlaceholderText" xml:space="preserve"><value>repo</value></data>
+  <data name="Home_StatusHint" xml:space="preserve"><value>Enter owner/repo and refresh, or sign in under Settings.</value></data>
+  <data name="Home_NeedOwnerRepo" xml:space="preserve"><value>Enter an owner and repository, or pick repositories in Settings.</value></data>
+  <data name="Home_Loading" xml:space="preserve"><value>Loading {0} repository(ies)…</value></data>
+  <data name="Home_Error" xml:space="preserve"><value>Could not load the feed.</value></data>
+  <data name="Home_Empty" xml:space="preserve"><value>Nothing to show for this filter.</value></data>
+  <data name="Home_Count" xml:space="preserve"><value>{0} items</value></data>
+  <data name="Home_ClearAll" xml:space="preserve"><value>Clear all</value></data>
+  <data name="Home_ClearActions" xml:space="preserve"><value>Clear Actions</value></data>
+  <data name="Home_ClearPrs" xml:space="preserve"><value>Clear PRs</value></data>
+  <data name="Home_ClearBranches" xml:space="preserve"><value>Clear Branches</value></data>
+  <data name="Card_Open" xml:space="preserve"><value>Open on GitHub</value></data>
+  <data name="Card_OpenPr" xml:space="preserve"><value>Open pull request</value></data>
+  <data name="Card_OpenFiles" xml:space="preserve"><value>View files</value></data>
+  <data name="Card_OpenChecks" xml:space="preserve"><value>View checks</value></data>
+  <data name="Card_OpenCommits" xml:space="preserve"><value>View commits</value></data>
+  <data name="Card_Rerun" xml:space="preserve"><value>Re-run</value></data>
+  <data name="Card_RerunFailed" xml:space="preserve"><value>Re-run failed jobs</value></data>
+  <data name="Card_CancelRun" xml:space="preserve"><value>Cancel run</value></data>
+  <data name="Card_NeedLogin" xml:space="preserve"><value>Sign in with GitHub in Settings to use this action.</value></data>
+  <data name="Home_UsingRepos" xml:space="preserve"><value>Watching {0} configured repository(ies).</value></data>
+  <data name="Notify_ManyTitle" xml:space="preserve"><value>{0} new updates</value></data>
+
+  <data name="About_Description.Text" xml:space="preserve"><value>Native monitor for GitHub Actions, pull requests and branches. The core is shared in Rust; this is the Windows UI.</value></data>
+  <data name="About_License.Text" xml:space="preserve"><value>MIT license.</value></data>
+  <data name="About_Version" xml:space="preserve"><value>Version {0}</value></data>
+  <data name="About_GitHubLink.Content" xml:space="preserve"><value>Device Flow documentation</value></data>
+
+  <data name="Changelog_Missing" xml:space="preserve"><value>Changelog not found.</value></data>
+
+  <data name="Settings_AccountHeader.Text" xml:space="preserve"><value>GitHub account</value></data>
+  <data name="Settings_NotSignedIn.Text" xml:space="preserve"><value>Sign in with GitHub to list your repositories.</value></data>
+  <data name="Settings_SignedInAs" xml:space="preserve"><value>Signed in as {0}</value></data>
+  <data name="Settings_SignIn.Content" xml:space="preserve"><value>Sign in with GitHub</value></data>
+  <data name="Settings_SignOut.Content" xml:space="preserve"><value>Sign out</value></data>
+  <data name="Settings_UserCodeHint.Text" xml:space="preserve"><value>Enter this code on GitHub:</value></data>
+  <data name="Settings_CopyCode.Content" xml:space="preserve"><value>Copy</value></data>
+  <data name="Settings_OpenGithub.Content" xml:space="preserve"><value>Open GitHub</value></data>
+  <data name="Settings_WaitingAuth.Text" xml:space="preserve"><value>Waiting for authorization…</value></data>
+  <data name="Settings_AuthExpired" xml:space="preserve"><value>The code expired. Try signing in again.</value></data>
+  <data name="Settings_AuthDenied" xml:space="preserve"><value>Authorization was denied.</value></data>
+
+  <data name="Settings_ReposHeader.Text" xml:space="preserve"><value>Repositories</value></data>
+  <data name="Settings_ReposDescription.Text" xml:space="preserve"><value>Choose which repositories to watch. The list requires a signed-in account.</value></data>
+  <data name="Settings_RepoSearch.PlaceholderText" xml:space="preserve"><value>Search</value></data>
+  <data name="Settings_LoadRepos.Content" xml:space="preserve"><value>Load</value></data>
+  <data name="Settings_NeedLoginForRepos" xml:space="preserve"><value>Sign in with GitHub to load your repositories.</value></data>
+
+  <data name="Settings_EventsHeader.Text" xml:space="preserve"><value>Events</value></data>
+  <data name="Settings_EventsDescription.Text" xml:space="preserve"><value>Which changes to watch. The default applies to every repository; you can override per repo.</value></data>
+  <data name="Settings_EventsGlobal" xml:space="preserve"><value>All repositories (default)</value></data>
+
+  <data name="Event_PrOpened" xml:space="preserve"><value>PR opened</value></data>
+  <data name="Event_PrMerged" xml:space="preserve"><value>PR merged</value></data>
+  <data name="Event_PrClosed" xml:space="preserve"><value>PR closed</value></data>
+  <data name="Event_ReviewRequested" xml:space="preserve"><value>Review requested</value></data>
+  <data name="Event_Mention" xml:space="preserve"><value>Mentioned</value></data>
+  <data name="Event_TeamMention" xml:space="preserve"><value>Team mention</value></data>
+  <data name="Event_CiActivity" xml:space="preserve"><value>CI / Actions</value></data>
+  <data name="Event_Push" xml:space="preserve"><value>New commits / push</value></data>
+  <data name="Event_Assign" xml:space="preserve"><value>Assigned / Author</value></data>
+
+  <data name="Settings_PollingHeader.Text" xml:space="preserve"><value>Refresh interval</value></data>
+  <data name="Polling_30s" xml:space="preserve"><value>30 seconds</value></data>
+  <data name="Polling_1m" xml:space="preserve"><value>1 minute</value></data>
+  <data name="Polling_2m" xml:space="preserve"><value>2 minutes</value></data>
+  <data name="Polling_5m" xml:space="preserve"><value>5 minutes</value></data>
+  <data name="Polling_10m" xml:space="preserve"><value>10 minutes</value></data>
+  <data name="Polling_15m" xml:space="preserve"><value>15 minutes</value></data>
+  <data name="Polling_30m" xml:space="preserve"><value>30 minutes</value></data>
+  <data name="Polling_1h" xml:space="preserve"><value>1 hour</value></data>
+
+  <data name="Settings_LanguageHeader.Text" xml:space="preserve"><value>Language</value></data>
+  <data name="Lang_PtBr" xml:space="preserve"><value>Português (Brasil)</value></data>
+  <data name="Lang_En" xml:space="preserve"><value>English</value></data>
+
+  <data name="Settings_ThemeHeader.Text" xml:space="preserve"><value>Theme</value></data>
+  <data name="Theme_System" xml:space="preserve"><value>System</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>Light</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>Dark</value></data>
+
+  <data name="Settings_StartupHeader.Text" xml:space="preserve"><value>Startup</value></data>
+  <data name="Settings_StartupDescription.Text" xml:space="preserve"><value>Start with Windows</value></data>
+
+  <data name="Settings_QuitHeader.Text" xml:space="preserve"><value>Quit</value></data>
+  <data name="Settings_QuitDescription.Text" xml:space="preserve"><value>Fully closes the app, including the tray icon.</value></data>
+  <data name="Settings_Quit.Content" xml:space="preserve"><value>Quit OctoWatch</value></data>
+  <data name="Settings_TransparencyHeader.Text" xml:space="preserve"><value>Transparency</value></data>
+  <data name="Settings_AcrylicLabel.Text" xml:space="preserve"><value>Enable acrylic material</value></data>
+  <data name="Settings_AcrylicDesc.Text" xml:space="preserve"><value>Applies a translucent (glass) texture to the window background.</value></data>
+  <data name="Settings_OpacityLabel.Text" xml:space="preserve"><value>Background opacity</value></data>
+  <data name="Settings_Apply.Content" xml:space="preserve"><value>Apply</value></data>
+  <data name="Settings_ResetDefault.Content" xml:space="preserve"><value>Restore default</value></data>
+  <data name="Settings_UpdatesHeader.Text" xml:space="preserve"><value>Updates</value></data>
+  <data name="Settings_AutoUpdate.Text" xml:space="preserve"><value>Update automatically on launch</value></data>
+  <data name="Settings_CheckUpdates.Content" xml:space="preserve"><value>Check for updates</value></data>
+  <data name="Settings_UpToDate" xml:space="preserve"><value>You're on the latest version.</value></data>
+  <data name="Settings_Updating" xml:space="preserve"><value>Downloading update…</value></data>
+  <data name="Settings_UpdateFailed" xml:space="preserve"><value>Couldn't check for updates.</value></data>
+  <data name="Settings_UpdateDevBuild" xml:space="preserve"><value>Auto-update isn't available in this build.</value></data>
+  <data name="Time_JustNow" xml:space="preserve"><value>just now</value></data>
+  <data name="Time_Minutes" xml:space="preserve"><value>{0} min ago</value></data>
+  <data name="Time_Hours" xml:space="preserve"><value>{0} h ago</value></data>
+  <data name="Time_Yesterday" xml:space="preserve"><value>yesterday</value></data>
+  <data name="Time_Days" xml:space="preserve"><value>{0} d ago</value></data>
+  <data name="Time_Weeks" xml:space="preserve"><value>{0} w ago</value></data>
+  <data name="Auth_Expired" xml:space="preserve"><value>Your GitHub sign-in expired or was revoked. Sign in again in Settings.</value></data>
+  <data name="Detail_Files" xml:space="preserve"><value>{0} files</value></data>
+  <data name="Detail_NoDescription" xml:space="preserve"><value>No description.</value></data>
+  <data name="Detail_Merged" xml:space="preserve"><value>merged</value></data>
+  <data name="Detail_Draft" xml:space="preserve"><value>draft</value></data>
+  <data name="Detail_Mergeable" xml:space="preserve"><value>mergeable</value></data>
+  <data name="Detail_Conflicts" xml:space="preserve"><value>has conflicts</value></data>
+  <data name="Detail_Reviewers" xml:space="preserve"><value>Reviewers: {0}</value></data>
+</root>

@@ -1,0 +1,4 @@
+module octowatch_coreFFI {
+    header "octowatch_coreFFI.h"
+    export *
+}

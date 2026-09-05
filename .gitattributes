@@ -1,0 +1,6 @@
+# Normalize line endings; keep LF for scripts and cross-platform source so the
+# macOS/Linux build scripts aren't broken by CRLF checked out on Windows.
+* text=auto
+*.sh text eol=lf
+*.swift text eol=lf
+*.rs text eol=lf
